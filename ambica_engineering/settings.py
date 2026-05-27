@@ -87,3 +87,12 @@ ADMIN_SITE_TITLE = "Ambica Admin Portal"
 ADMIN_INDEX_TITLE = "Welcome, Admin"
 
 STATIC_ROOT = BASE_DIR / 'staticfiles'
+
+import dj_database_url
+import os
+
+DATABASES = {
+    'default': dj_database_url.config(
+        default=os.environ.get('DATABASE_URL')
+    )
+}
