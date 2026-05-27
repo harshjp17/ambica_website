@@ -5,9 +5,11 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 SECRET_KEY = 'ambica@shree#2025$engineering!harsh&wire@mesh#gujarat'
 
-DEBUG = False
+DEBUG = True
 
-ALLOWED_HOSTS = ['ambicaeng.co.in','www.ambicaeng.co.in']
+
+ALLOWED_HOSTS = ['*']
+
 
 INSTALLED_APPS = [
     'django.contrib.admin',
