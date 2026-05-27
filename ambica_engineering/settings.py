@@ -5,10 +5,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 SECRET_KEY = 'ambica@shree#2025$engineering!harsh&wire@mesh#gujarat'
 
-DEBUG = True
-
-
-ALLOWED_HOSTS = ['*']
+DEBUG = False
 
 
 INSTALLED_APPS = [
@@ -111,3 +108,15 @@ else:
     }
 
     CSRF_TRUSTED_ORIGINS = ['https://ambicawebsite-production.up.railway.app']
+
+    ALLOWED_HOSTS = [
+    'ambicaeng.co.in',
+    'www.ambicaeng.co.in',
+    'localhost',
+    '127.0.0.1',
+]
+
+CSRF_TRUSTED_ORIGINS = [
+    'https://ambicaeng.co.in',
+    'https://www.ambicaeng.co.in',
+]
