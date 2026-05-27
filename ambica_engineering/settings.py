@@ -8,6 +8,13 @@ SECRET_KEY = 'ambica@shree#2025$engineering!harsh&wire@mesh#gujarat'
 DEBUG = False
 
 
+ALLOWED_HOSTS = [
+    'ambicaeng.co.in',
+    'www.ambicaeng.co.in',
+    'localhost',
+    '127.0.0.1',
+]
+
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
@@ -110,14 +117,12 @@ else:
 
     CSRF_TRUSTED_ORIGINS = ['https://ambicawebsite-production.up.railway.app']
 
-    ALLOWED_HOSTS = [
-    'ambicaeng.co.in',
-    'www.ambicaeng.co.in',
-    'localhost',
-    '127.0.0.1',
-]
+    
+
+
 
 CSRF_TRUSTED_ORIGINS = [
-    'https://ambicaeng.co.in',
+    'https://ambicawebsite-production.up.railway.app',
     'https://www.ambicaeng.co.in',
+    'https://ambicaeng.co.in',
 ]
