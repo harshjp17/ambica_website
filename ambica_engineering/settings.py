@@ -3,11 +3,11 @@ import os
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-SECRET_KEY = 'django-insecure-ambica-change-this-in-production-2025'
+SECRET_KEY = 'ambica@shree#2025$engineering!harsh&wire@mesh#gujarat'
 
-DEBUG = True
+DEBUG = False
 
-ALLOWED_HOSTS = ['*']
+ALLOWED_HOSTS = ['ambicaeng.co.in','www.ambicaeng.co.in']
 
 INSTALLED_APPS = [
     'django.contrib.admin',
