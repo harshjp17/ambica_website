@@ -1,0 +1,113 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{% block title %}Shree Ambica Engineering — Wiremesh Screens & Perforated Plates Manufacturer, Dhansura{% endblock %}</title>
+  <meta name="description" content="{% block meta_desc %}Shree Ambica Engineering — Manufacturer of Crimped Carbon Coated Wiremesh Screens and Punching Perforated Plates for Mining and Quarry since 1997. Based in Ahmedabad, Gujarat. PAN India supply.{% endblock %}">
+  <meta name="keywords" content="{% block meta_keys %}wire mesh screen manufacturer India, crimped wiremesh screen quarry, perforated plate manufacturer Ahmedabad, mining screen mesh supplier, vibrating screen mesh manufacturer, carbon coated wire mesh, punching perforated plate mining, stone crusher screen mesh, quarry screening media, heavy duty wire mesh India{% endblock %}">
+  <meta name="robots" content="index, follow">
+  <meta name="author" content="Shree Ambica Engineering">
+  <link rel="canonical" href="{% block canonical %}https://www.ambicaeng.co.in/{% endblock %}">
+
+  <!-- Open Graph -->
+  <meta property="og:type"        content="website">
+  <meta property="og:site_name"   content="Shree Ambica Engineering">
+  <meta property="og:title"       content="{% block og_title %}Shree Ambica Engineering — Wiremesh & Perforated Plate Manufacturer{% endblock %}">
+  <meta property="og:description" content="{% block og_desc %}India's trusted manufacturer of Crimped Wiremesh Screens and Punching Perforated Plates for Mining & Quarry since 1997.{% endblock %}">
+  <meta property="og:image"       content="{% static 'images/logo.png' %}">
+  <meta property="og:url"         content="{% block og_url %}https://www.ambicaeng.co.in/{% endblock %}">
+
+  <!-- Schema.org -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "LocalBusiness",
+    "name": "Shree Ambica Engineering",
+    "description": "Manufacturer of Crimped Wiremesh Screens and Punching Perforated Plates for Mining and Quarry",
+    "foundingDate": "1997",
+    "address": {
+      "@type": "PostalAddress",
+      "addressLocality": "Dhansura",
+      "addressRegion": "Gujarat",
+      "addressCountry": "IN"
+    },
+    "url": "https://www.ambicaeng.co.in",
+    "logo": "{% static 'images/logo.png' %}"
+  }
+  </script>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;800;900&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{% static 'css/style.css' %}">
+</head>
+<body>
+
+<!-- NAVBAR -->
+<nav class="navbar">
+  <div class="nav-inner">
+    <a href="/" class="navbar-logo">
+      <img src="{% static 'images/logo.png' %}" alt="Shree Ambica Engineering Logo">
+    </a>
+    <ul class="nav-links" id="navLinks">
+      <li><a href="/"          {% if page == 'home'     %}class="active"{% endif %}>Home</a></li>
+      <li><a href="/services/" {% if page == 'services' %}class="active"{% endif %}>Products & Services</a></li>
+      <li><a href="/about/"    {% if page == 'about'    %}class="active"{% endif %}>About Us</a></li>
+      <li><a href="/contact/"  {% if page == 'contact'  %}class="active nav-cta"{% else %}class="nav-cta"{% endif %}>Get a Quote</a></li>
+    </ul>
+    <button class="hamburger" id="hamburger" aria-label="Menu">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+</nav>
+
+{% block content %}{% endblock %}
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-inner">
+    <div>
+      <img src="{% static 'images/logo.png' %}" alt="Shree Ambica Engineering" class="footer-logo">
+      <p class="footer-tagline">Trusted manufacturer of heavy-duty Wiremesh Screens and Perforated Plates for Mining, Quarry, and Aggregate industries since 1997.</p>
+    </div>
+    <div>
+      <div class="footer-col-title">Quick Links</div>
+      <ul class="footer-links">
+        <li><a href="/">Home</a></li>
+        <li><a href="/services/">Products & Services</a></li>
+        <li><a href="/about/">About Us</a></li>
+        <li><a href="/contact/">Contact / Quote</a></li>
+      </ul>
+    </div>
+    <div>
+      <div class="footer-col-title">Products</div>
+      <ul class="footer-links">
+        <li><a href="/services/">Crimped Wiremesh Screens</a></li>
+        <li><a href="/services/">Perforated Plates</a></li>
+        <li><a href="/services/">Custom Screen Panels</a></li>
+        <li><a href="/contact/">Request a Sample</a></li>
+      </ul>
+    </div>
+    <div>
+      <div class="footer-col-title">Contact Us</div>
+      <div class="footer-contact-item"><span>📍</span><span>Shree Ambica Engineering<br>Behind Marketyard, Dhansura, Ahmedabad Road, Gujarat 383310</span></div>
+      <div class="footer-contact-item"><span>📞</span><span>+91 8128264500</span></div>
+      <div class="footer-contact-item"><span>✉️</span><span>hello.ambicaeng@gmail.com</span></div>
+      <div class="footer-contact-item"><span>🕐</span><span>Mon–Sat: 9AM – 7PM</span></div>
+    </div>
+  </div>
+  <div class="footer-bottom" style="max-width:1200px;margin:0 auto;">
+    <p>© {% now "Y" %} Shree Ambica Engineering. All Rights Reserved. Dhansura, Gujarat, India.</p>
+    <p>Est. 1997 · Wire Mesh & Perforated Plate Manufacturer</p>
+  </div>
+  <p class="footer-seo" style="max-width:1200px;margin:.75rem auto 0;">
+    Wire Mesh Screen Manufacturer India | Crimped Wiremesh Quarry Screen | Perforated Plate Manufacturer Ahmedabad |
+    Mining Screen Supplier Gujarat | Vibrating Screen Media | Carbon Coated Wire Mesh | Stone Crusher Screen Mesh
+  </p>
+</footer>
+
+<script src="{% static 'js/main.js' %}"></script>
+</body>
+</html>

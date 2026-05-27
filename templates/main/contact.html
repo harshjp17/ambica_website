@@ -1,0 +1,132 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Contact Us & Get a Quote — Shree Ambica Engineering | Ahmedabad{% endblock %}
+{% block meta_desc %}Contact Shree Ambica Engineering for a custom quote on Wiremesh Screens or Perforated Plates. Based in Ahmedabad, Gujarat. Quick 24-hour response. PAN India delivery.{% endblock %}
+{% block meta_keys %}contact wire mesh manufacturer Ahmedabad, get quote wiremesh screen, perforated plate quote India, mining screen supplier contact, wire mesh screen price quote{% endblock %}
+{% block canonical %}https://www.ambicaengineering.in/contact/{% endblock %}
+{% block og_url %}https://www.ambicaengineering.in/contact/{% endblock %}
+{% block og_title %}Contact Shree Ambica Engineering — Get a Custom Quote{% endblock %}
+
+{% block content %}
+
+<div class="page-hero">
+  <div class="section-inner">
+    <div class="section-tag">Get In Touch</div>
+    <h1 class="section-title">Request a Quote or Technical Advice</h1>
+    <p class="section-sub">Tell us your screen frame dimensions, aperture size, material, and quantity. We'll come back with a competitive quote within 24 hours.</p>
+  </div>
+</div>
+
+<section>
+  <div class="section-inner">
+    {% if messages %}
+      {% for message in messages %}
+        <div class="alert alert-{{ message.tags }}">
+          ✅ {{ message }}
+        </div>
+      {% endfor %}
+    {% endif %}
+
+    <div class="contact-layout">
+      <!-- FORM -->
+      <div class="contact-form-wrap">
+        <h3>Send an Enquiry</h3>
+        <form method="POST" action="/contact/">
+          {% csrf_token %}
+          <div class="form-row">
+            <div class="form-group">
+              <label for="id_name">Full Name *</label>
+              {{ form.name }}
+              {% if form.name.errors %}<small style="color:var(--red)">{{ form.name.errors.0 }}</small>{% endif %}
+            </div>
+            <div class="form-group">
+              <label for="id_company">Company Name</label>
+              {{ form.company }}
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label for="id_phone">Phone / WhatsApp *</label>
+              {{ form.phone }}
+              {% if form.phone.errors %}<small style="color:var(--red)">{{ form.phone.errors.0 }}</small>{% endif %}
+            </div>
+            <div class="form-group">
+              <label for="id_email">Email Address *</label>
+              {{ form.email }}
+              {% if form.email.errors %}<small style="color:var(--red)">{{ form.email.errors.0 }}</small>{% endif %}
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="id_product">Product Required *</label>
+            {{ form.product }}
+          </div>
+          <div class="form-group">
+            <label for="id_message">Message / Specifications *</label>
+            {{ form.message }}
+            {% if form.message.errors %}<small style="color:var(--red)">{{ form.message.errors.0 }}</small>{% endif %}
+          </div>
+          <button type="submit" class="form-submit">&#9654; Submit Enquiry — We'll Reply in 24 Hours</button>
+        </form>
+      </div>
+
+      <!-- INFO SIDE -->
+      <div class="contact-info-side">
+        <div class="info-card">
+          <div class="info-icon">📍</div>
+          <div>
+            <div class="info-label">Our Address</div>
+            <div class="info-val">Shree Ambica Engineering<br>Behind Marketyard, Dhansura<br>Ahmedabad Road, Gujarat – 383310<br>India</div>
+          </div>
+        </div>
+        <div class="info-card">
+          <div class="info-icon">📞</div>
+          <div>
+            <div class="info-label">Phone / WhatsApp</div>
+            <div class="info-val">+91 8128264500</div>
+          </div>
+        </div>
+        <div class="info-card">
+          <div class="info-icon">✉️</div>
+          <div>
+            <div class="info-label">Email Address</div>
+            <div class="info-val">hello.ambicaeng@gmail.com</div>
+          </div>
+        </div>
+        <div class="info-card">
+          <div class="info-icon">🕐</div>
+          <div>
+            <div class="info-label">Business Hours</div>
+            <div class="info-val">Monday – Saturday: 9:00 AM – 7:00 PM<br>Sunday: Closed</div>
+          </div>
+        </div>
+        <div class="quick-tip">
+          <h4>📋 For Fastest Quote, Include:</h4>
+          <ul>
+            <li>Screen frame size (Length × Width)</li>
+            <li>Aperture / hole opening size</li>
+            <li>Wire diameter (for wiremesh orders)</li>
+            <li>Plate thickness (for perforated plates)</li>
+            <li>Quantity required (panels / kg / sheets)</li>
+            <li>Application / material being screened</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- WHY CONTACT -->
+<section style="background:var(--surface);">
+  <div class="section-inner section-center">
+    <div class="section-tag">Why Get a Quote From Us</div>
+    <div class="section-title">Direct Factory. Honest Pricing.</div>
+    <div class="why-grid">
+      <div class="why-card"><div class="why-icon">⏱️</div><div class="why-title">24-Hour Response</div><div class="why-body">We quote within 24 hours of receiving your enquiry — with exact pricing, not a vague range.</div></div>
+      <div class="why-card"><div class="why-icon">🏭</div><div class="why-title">Direct from Factory</div><div class="why-body">No distributor markup. You pay manufacturer price directly and get manufacturer-level technical support.</div></div>
+      <div class="why-card"><div class="why-icon">📐</div><div class="why-title">Free Design Advice</div><div class="why-body">Not sure which aperture or weave type to choose? Our team will advise based on your material and screen brand.</div></div>
+    </div>
+  </div>
+</section>
+
+{% endblock %}
