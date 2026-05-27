@@ -1,1 +1,1 @@
-web: gunicorn ambica_engineering.wsgi
+web: python manage.py collectstatic --noinput && gunicorn ambica_engineering.wsgi
