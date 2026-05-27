@@ -1,6 +1,5 @@
 from pathlib import Path
 import os
-import dj_database_url
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -8,10 +7,10 @@ SECRET_KEY = 'ambica@shree#2025$engineering!harsh&wire@mesh#gujarat'
 
 DEBUG = False
 
+
 ALLOWED_HOSTS = [
     'ambicaeng.co.in',
     'www.ambicaeng.co.in',
-    'ambicawebsite-production.up.railway.app',
     'localhost',
     '127.0.0.1',
 ]
@@ -59,23 +58,14 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'ambica_engineering.wsgi.application'
 
-DATABASE_URL = os.environ.get('DATABASE_URL')
+import dj_database_url
+import os
 
-if DATABASE_URL:
-    DATABASES = {
-        'default': dj_database_url.config(
-            default=DATABASE_URL,
-            conn_max_age=600
-        )
-    }
-else:
-    DATABASES = {
-        'default': {
-            'ENGINE': 'django.db.backends.sqlite3',
-            'NAME': BASE_DIR / 'db.sqlite3',
-        }
-    }
-
+DATABASES = {
+    'default': dj_database_url.config(
+        default=os.environ.get('DATABASE_URL')
+    )
+}
 AUTH_PASSWORD_VALIDATORS = [
     {'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator'},
     {'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator'},
@@ -98,12 +88,39 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 CRISPY_ALLOWED_TEMPLATE_PACKS = 'bootstrap5'
 CRISPY_TEMPLATE_PACK = 'bootstrap5'
 
+# Admin Customization
 ADMIN_SITE_HEADER = "Shree Ambica Engineering"
 ADMIN_SITE_TITLE = "Ambica Admin Portal"
 ADMIN_INDEX_TITLE = "Welcome, Admin"
 
+STATIC_ROOT = BASE_DIR / 'staticfiles'
+
+import os
+import dj_database_url
+
+DATABASE_URL = os.environ.get('DATABASE_URL')
+
+if DATABASE_URL:
+    DATABASES = {
+        'default': dj_database_url.config(
+            default=DATABASE_URL,
+            conn_max_age=600
+        )
+    }
+else:
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': BASE_DIR / 'db.sqlite3',
+        }
+    }
+
+    CSRF_TRUSTED_ORIGINS = ['https://ambicawebsite-production.up.railway.app']
+
+    
+
 CSRF_TRUSTED_ORIGINS = [
-    'https://ambicawebsite-production.up.railway.app',
-    'https://www.ambicaeng.co.in',
     'https://ambicaeng.co.in',
+    'https://www.ambicaeng.co.in',
 ]
+
