@@ -115,12 +115,10 @@ else:
         }
     }
 
-    CSRF_TRUSTED_ORIGINS = ['https://ambicawebsite-production.up.railway.app']
 
-    
 
-CSRF_TRUSTED_ORIGINS = [
-    'https://ambicaeng.co.in',
-    'https://www.ambicaeng.co.in',
-]
-
+    CSRF_TRUSTED_ORIGINS = [
+        'https://ambicawebsite-production.up.railway.app',
+        'https://ambicaeng.co.in',
+        'https://www.ambicaeng.co.in',
+    ]
