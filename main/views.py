@@ -7,6 +7,7 @@ from django.http import JsonResponse
 from django.views.decorators.http import require_http_methods
 from .models import Order
 import json
+from django.views.decorators.csrf import csrf_exempt
 
 def home(request):
     return render(request, 'main/home.html', {'page': 'home'})
@@ -79,6 +80,7 @@ def orders_list(request):
         })
     return JsonResponse({'orders': data})
 
+@csrf_exempt
 @login_required
 @require_http_methods(["POST"])
 def orders_save(request):
@@ -105,12 +107,14 @@ def orders_save(request):
         o = Order.objects.create(**fields)
     return JsonResponse({'id': o.id})
 
+@csrf_exempt
 @login_required
 @require_http_methods(["POST"])
 def orders_delete(request, order_id):
     Order.objects.filter(id=order_id).delete()
     return JsonResponse({'ok': True})
 
+@csrf_exempt
 @login_required
 @require_http_methods(["POST"])
 def orders_status(request, order_id):
