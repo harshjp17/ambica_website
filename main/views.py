@@ -30,6 +30,9 @@ def contact(request):
 
 
 
+from django.views.decorators.csrf import csrf_exempt
+
+@csrf_exempt
 def orders_login(request):
     if request.user.is_authenticated:
         return redirect('orders')
