@@ -32,7 +32,7 @@ def contact(request):
 
 def orders_login(request):
     if request.user.is_authenticated:
-        return redirect('orders_page')
+        return redirect('orders')
     error = ''
     if request.method == 'POST':
         username = request.POST.get('username')
@@ -40,7 +40,7 @@ def orders_login(request):
         user = authenticate(request, username=username, password=password)
         if user:
             login(request, user)
-            return redirect('orders_page')
+            return redirect('orders')
         else:
             error = 'Invalid username or password'
     return render(request, 'main/orders_login.html', {'error': error})
