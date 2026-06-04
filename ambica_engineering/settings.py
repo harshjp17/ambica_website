@@ -115,7 +115,7 @@ else:
         }
     }
 
-    LOGIN_URL = '/orders/login/'
+    LOGIN_URL = '/admin/login/'
 
     CSRF_TRUSTED_ORIGINS = [
         'https://ambicawebsite-production.up.railway.app',
