@@ -24,3 +24,30 @@ class Enquiry(models.Model):
 
     def __str__(self):
         return f"{self.name} — {self.get_product_display()} ({self.submitted_at.strftime('%d %b %Y')})"
+
+
+
+class Order(models.Model):
+    STATUS_CHOICES = [
+        ('pending', 'Pending'),
+        ('completed', 'Completed'),
+    ]
+    order_no      = models.PositiveIntegerField()
+    order_date    = models.CharField(max_length=20)
+    customer_name = models.CharField(max_length=200)
+    location      = models.CharField(max_length=200, blank=True)
+    rate          = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
+    total_nos     = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
+    total_weight  = models.DecimalField(max_digits=10, decimal_places=3, null=True, blank=True)
+    total_price   = models.DecimalField(max_digits=12, decimal_places=2, null=True, blank=True)
+    price_per_nos = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
+    line_items    = models.JSONField(default=list)
+    notes         = models.TextField(blank=True)
+    status        = models.CharField(max_length=20, choices=STATUS_CHOICES, default='pending')
+    created_at    = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ['-order_no']
+
+    def __str__(self):
+        return f"#{self.order_no} — {self.customer_name}"   

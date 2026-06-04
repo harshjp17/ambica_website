@@ -1,0 +1,593 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}SAE Order Manager{% endblock %}
+
+{% block content %}
+<style>
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+input,select,button{font-family:inherit;font-size:14px}
+input,select{background:#faf7f4;border:1px solid #d6cfc7;border-radius:8px;padding:9px 12px;color:#1c1917;width:100%;outline:none;-webkit-appearance:none;appearance:none}
+input:focus,select:focus{border-color:#d97706}
+button{cursor:pointer;border:none;border-radius:8px;font-weight:600;transition:opacity .15s;-webkit-appearance:none}
+button:active{opacity:.8}
+.btn-p{background:#d97706;color:#fff;padding:9px 16px}
+.btn-g{background:#15803d;color:#fff;padding:9px 16px}
+.btn-d{background:#dc2626;color:#fff;padding:7px 12px;font-size:12px}
+.btn-s{background:#f0ebe4;color:#57534e;padding:7px 12px;font-size:12px}
+.btn-ghost{background:transparent;color:#78716c;padding:9px 16px;border:1px solid #d6cfc7}
+.btn-full{width:100%}
+.btn-sm{padding:6px 12px;font-size:12px}
+.ocard{background:#fff;border-radius:14px;border:1px solid #e7e0d8;box-shadow:0 1px 4px rgba(0,0,0,.06)}
+label.lbl{font-size:10px;color:#a39389;font-weight:700;text-transform:uppercase;letter-spacing:.08em;display:block;margin-bottom:4px}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px}
+.flex-row{display:flex;gap:8px;align-items:flex-end}
+.flex-between{display:flex;justify-content:space-between;align-items:center}
+#oheader{background:rgba(245,240,235,.97);border-bottom:1px solid #e7e0d8;padding:10px 16px;display:flex;align-items:center;justify-content:space-between}
+#oheader .logo{font-weight:800;color:#d97706;font-size:14px}
+#oheader .sub{font-size:10px;color:#a39389}
+.opage{max-width:500px;margin:0 auto;padding:16px 14px 60px}
+.section-title{color:#d97706;font-weight:800;font-size:17px;margin-bottom:14px}
+.stat-card{padding:10px 6px;text-align:center}
+.stat-val{font-size:24px;font-weight:800}
+.stat-lbl{font-size:10px;color:#a39389;margin-top:2px}
+.order-card{border-left:3px solid #d97706;margin-bottom:8px;overflow:hidden}
+.order-card.done{border-left-color:#16a34a;opacity:.85}
+.order-header{display:flex;align-items:center;gap:10px;padding:11px 14px;cursor:pointer}
+.order-no{color:#d97706;font-weight:800;font-size:15px;min-width:28px}
+.order-name{font-weight:700;font-size:13px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.order-sub{font-size:11px;color:#a39389}
+.order-price{color:#b45309;font-weight:800;font-size:13px;text-align:right}
+.order-wt{font-size:11px;color:#a39389;text-align:right}
+.badge{font-size:10px;padding:3px 8px;border-radius:20px;font-weight:700;flex-shrink:0}
+.badge.pending{background:#fff7ed;color:#d97706}
+.badge.done{background:#dcfce7;color:#16a34a}
+.chevron{color:#c7bdb5;font-size:11px}
+.order-detail{padding:10px 14px 14px;border-top:1px solid #f0ebe3}
+.line-item-row{display:flex;justify-content:space-between;align-items:center;font-size:12px;padding:4px 0;border-bottom:1px solid #ede8e3}
+.line-item-row:last-child{border-bottom:none}
+.type-badge{background:#d97706;color:#fff;border-radius:4px;padding:1px 6px;font-size:10px;font-weight:700;margin-right:5px}
+.total-row{display:flex;justify-content:space-between;font-weight:700;font-size:12px;padding-top:7px;margin-top:4px;border-top:1px solid #e7e0d8}
+.rate-info{font-size:11px;color:#92400e;background:#fef9ec;border-radius:6px;padding:6px 10px;margin-top:4px}
+.action-btns{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
+.line-item-box{background:#fff;border-radius:12px;border:1px solid #e7e0d8;padding:12px;margin-bottom:8px}
+.type-toggle{display:flex;border-radius:8px;overflow:hidden;border:1px solid #d6cfc7;width:100%}
+.type-toggle button{flex:1;padding:8px;font-size:13px;font-weight:700;border:none;background:#faf7f4;color:#78716c;transition:background .15s}
+.type-toggle button.active{background:#d97706;color:#fff}
+.line-total{display:flex;justify-content:space-between;align-items:center;margin-top:8px;padding-top:7px;border-top:1px solid #f0ebe3;font-size:11px}
+.totals-box{background:#fffbf4;border:1px solid #f5e6c8;border-radius:12px;padding:13px}
+.price-hint{font-size:11px;color:#92400e;background:#fef3c7;border-radius:6px;padding:5px 10px;margin-top:8px}
+.filter-bar{display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;margin-bottom:4px}
+.filter-btn{padding:7px 0;border-radius:8px;font-size:11px;font-weight:600;background:#fff;color:#78716c;border:1px solid #e7e0d8;text-transform:capitalize}
+.filter-btn.active{background:#d97706;color:#fff;border-color:#d97706}
+.oempty{text-align:center;padding:40px 20px;color:#a39389}
+.empty-icon{font-size:36px;margin-bottom:10px}
+.summary-card{padding:14px;margin-bottom:10px}
+.month-title{color:#d97706;font-weight:800;font-size:15px}
+.month-sub{font-size:11px;color:#a39389}
+.sum-tile{background:#faf7f4;border-radius:10px;padding:10px 6px;text-align:center;border:1px solid #ede8e3}
+.sum-val{font-size:18px;font-weight:800}
+.sum-lbl{font-size:10px;color:#a39389;margin-top:2px}
+.ohidden{display:none}
+select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%2378716c' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 10px center;padding-right:30px}
+.dim-row{background:#faf7f4;border-radius:8px;padding:10px;margin-top:8px;border:1px solid #ede8e3;position:relative}
+.dim-row-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
+.dim-row-num{font-size:10px;color:#a39389;font-weight:700;text-transform:uppercase}
+.add-dim-btn{background:#fff7ed;color:#d97706;border:1px solid #f5d078;border-radius:6px;padding:5px 10px;font-size:11px;font-weight:700;width:100%;margin-top:8px}
+.mesh-divider{border:none;border-top:1px dashed #e7e0d8;margin:10px 0 0}
+.otoast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:#1c1917;color:#fff;padding:10px 20px;border-radius:10px;font-size:13px;font-weight:600;z-index:9999;opacity:0;transition:opacity .3s;pointer-events:none}
+.otoast.show{opacity:1}
+#cardOverlay{position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:8000;display:flex;align-items:center;justify-content:center;padding:16px}
+#cardOverlay.ohidden{display:none}
+#shareCardWrap{background:#fff;border-radius:16px;overflow:hidden;width:100%;max-width:420px;box-shadow:0 8px 40px rgba(0,0,0,.3)}
+.sc-header{background:linear-gradient(135deg,#d97706,#b45309);padding:16px 18px;color:#fff}
+.sc-logo{font-size:15px;font-weight:800;letter-spacing:.02em}
+.sc-sub{font-size:10px;opacity:.8;margin-top:2px}
+.sc-meta{margin-top:10px;display:flex;justify-content:space-between;align-items:flex-end}
+.sc-ordno{font-size:22px;font-weight:900}
+.sc-datecu{font-size:11px;opacity:.9;text-align:right;line-height:1.5}
+.sc-body{padding:14px 16px}
+.sc-mesh-block{margin-bottom:10px}
+.sc-mesh-title{display:flex;align-items:center;gap:6px;padding:5px 8px;background:#fff7ed;border-radius:8px;margin-bottom:4px;border-left:3px solid #d97706}
+.sc-type{background:#d97706;color:#fff;font-size:9px;font-weight:800;padding:2px 6px;border-radius:4px}
+.sc-mesh-name{font-weight:800;font-size:13px;color:#1c1917}
+.sc-dim-row{display:flex;justify-content:space-between;align-items:center;padding:4px 8px;font-size:12px;border-bottom:1px solid #f5f0eb}
+.sc-dim-row:last-child{border-bottom:none}
+.sc-dim-left{color:#57534e}
+.sc-dim-ppn{color:#15803d;font-size:10px;font-weight:700;margin-left:4px}
+.sc-dim-wt{color:#d97706;font-weight:700}
+.sc-divider{height:1px;background:#e7e0d8;margin:10px 0}
+.sc-totals{display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:6px;margin-bottom:10px}
+.sc-tile{background:#faf7f4;border-radius:8px;padding:8px 6px;text-align:center;border:1px solid #ede8e3}
+.sc-tile-val{font-size:16px;font-weight:800;color:#1c1917}
+.sc-tile-lbl{font-size:9px;color:#a39389;margin-top:2px;text-transform:uppercase}
+.sc-price-row{background:#fff7ed;border-radius:10px;padding:10px 14px;display:flex;justify-content:space-between;align-items:center}
+.sc-total-label{font-size:11px;color:#92400e;font-weight:600}
+.sc-total-price{font-size:20px;font-weight:900;color:#b45309}
+.sc-footer{background:#faf7f4;padding:8px 16px;font-size:10px;color:#a39389;text-align:center;border-top:1px solid #e7e0d8}
+.sc-action-row{display:flex;gap:8px;padding:12px 16px;background:#fff;border-top:1px solid #e7e0d8}
+</style>
+
+<div id="oheader">
+  <div>
+    <div class="logo">⚙️ Shree Ambica Engineering</div>
+    <div class="sub">Order Manager</div>
+  </div>
+  <div style="display:flex;gap:6px">
+    <button class="btn-p btn-sm" id="navOrders" onclick="showView('orders')">📋 Orders</button>
+    <button class="btn-ghost btn-sm" id="navSummary" onclick="showView('summary')">📊</button>
+    <button class="btn-g btn-sm" id="navNew" onclick="newOrder()">+ New</button>
+    <a href="/orders/logout/" style="text-decoration:none">
+      <button class="btn-d btn-sm">🚪 Logout</button>
+    </a>
+  </div>
+</div>
+<div class="opage">
+
+  <div id="view-orders">
+    <div class="grid3" style="margin-bottom:10px" id="statsRow"></div>
+    <input type="search" id="searchInput" placeholder="🔍 Search customer / location..." style="margin-bottom:10px" oninput="renderOrders()"/>
+    <div class="filter-bar" id="filterBar">
+      <button class="filter-btn active" onclick="setFilter('all',this)">All</button>
+      <button class="filter-btn" onclick="setFilter('pending',this)">Pending</button>
+      <button class="filter-btn" onclick="setFilter('completed',this)">Completed</button>
+    </div>
+    <div id="ordersList"></div>
+  </div>
+
+  <div id="view-form" class="ohidden">
+    <div class="section-title" id="formTitle">📝 New Order</div>
+    <div id="formContainer"></div>
+  </div>
+
+  <div id="view-summary" class="ohidden">
+    <div class="section-title">📊 Monthly Summary</div>
+    <div id="summaryContainer"></div>
+  </div>
+
+</div>
+
+<div id="cardOverlay" class="ohidden" onclick="closeCard(event)">
+  <div id="shareCardWrap">
+    <div id="shareCardContent"></div>
+    <div class="sc-action-row">
+      <button class="btn-p btn-full" onclick="doShare()">📤 Share / Download</button>
+      <button class="btn-ghost btn-full" onclick="document.getElementById('cardOverlay').classList.add('ohidden')">✕ Close</button>
+    </div>
+  </div>
+</div>
+
+<div class="otoast" id="otoast"></div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script>
+const CSRF = '{{ csrf_token }}';
+let orders = [];
+let currentFilter = 'all';
+let editingId = null;
+
+function toast(msg) {
+  const t = document.getElementById('otoast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2200);
+}
+
+// ── API ──────────────────────────────────────────────────────────
+async function apiGet(url) {
+  const r = await fetch(url);
+  return r.json();
+}
+async function apiPost(url, data) {
+  const r = await fetch(url, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', 'X-CSRFToken': CSRF },
+    body: JSON.stringify(data)
+  });
+  return r.json();
+}
+
+async function loadOrders() {
+  const data = await apiGet('/api/orders/');
+  orders = data.orders || [];
+  renderOrders();
+}
+
+function nextOrderNo() {
+  if (!orders.length) return 1;
+  return Math.max(...orders.map(o => parseInt(o.orderNo)||0)) + 1;
+}
+
+function migrateLI(li) {
+  if (li.rows) return li;
+  return { meshSize: li.meshSize||'', type: li.type||'C', rows:[{ dims: li.dims||'', qty: li.qty||'', weightEach: li.weightEach||'' }] };
+}
+function blankMesh() {
+  return { meshSize:'', type:'C', rows:[{ dims:'', qty:'', weightEach:'' }] };
+}
+
+// ── VIEWS ────────────────────────────────────────────────────────
+function showView(v) {
+  ['orders','form','summary'].forEach(x => {
+    document.getElementById('view-'+x).classList.toggle('ohidden', x !== v);
+  });
+  document.getElementById('navOrders').className = v==='orders' ? 'btn-p btn-sm' : 'btn-ghost btn-sm';
+  document.getElementById('navSummary').className = v==='summary' ? 'btn-p btn-sm' : 'btn-ghost btn-sm';
+  document.getElementById('navNew').classList.toggle('ohidden', v==='form');
+  if (v==='orders') renderOrders();
+  if (v==='summary') renderSummary();
+}
+
+// ── ORDERS LIST ──────────────────────────────────────────────────
+function setFilter(f, btn) {
+  currentFilter = f;
+  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  renderOrders();
+}
+
+function renderOrders() {
+  const search = (document.getElementById('searchInput').value||'').toLowerCase();
+  const filtered = orders.filter(o => {
+    if (currentFilter !== 'all' && o.status !== currentFilter) return false;
+    if (search && !o.customerName.toLowerCase().includes(search) && !(o.location||'').toLowerCase().includes(search)) return false;
+    return true;
+  });
+  const pending = orders.filter(o => o.status !== 'completed').length;
+  document.getElementById('statsRow').innerHTML = [
+    ['Total', orders.length, '#1c1917'],
+    ['Pending', pending, '#d97706'],
+    ['Done', orders.length - pending, '#16a34a'],
+  ].map(([l,v,c]) => `<div class="ocard stat-card"><div class="stat-val" style="color:${c}">${v}</div><div class="stat-lbl">${l}</div></div>`).join('');
+
+  const el = document.getElementById('ordersList');
+  if (!filtered.length) {
+    el.innerHTML = `<div class="oempty"><div class="empty-icon">📋</div><div>No orders found</div><br><button class="btn-p" onclick="newOrder()">+ Add First Order</button></div>`;
+    return;
+  }
+  el.innerHTML = filtered.map(o => orderCardHTML(o)).join('');
+}
+
+function orderCardHTML(o) {
+  const done = o.status === 'completed';
+  const items = (o.lineItems||[]).map(migrateLI).filter(li => li.meshSize || li.rows.some(r=>r.dims||r.qty));
+  const itemsHTML = items.map(li => {
+    const rowsHTML = li.rows.filter(r=>r.dims||r.qty).map(row => {
+      const lw = row.qty && row.weightEach ? (parseFloat(row.qty)*parseFloat(row.weightEach)).toFixed(3) : '';
+      const ppn = row.weightEach && o.rate ? parseFloat((parseFloat(row.weightEach)*parseFloat(o.rate)).toFixed(2)) : '';
+      return `<div class="line-item-row" style="padding-left:10px">
+        <span style="color:#57534e">${row.dims} — ${row.qty} Nos${ppn?` <span style="color:#15803d;font-size:10px;font-weight:700">(₹${Number(ppn).toLocaleString('en-IN')}/nos)</span>`:''}</span>
+        ${lw ? `<span style="color:#d97706;font-weight:700">${lw} kg</span>` : ''}
+      </div>`;
+    }).join('');
+    return `<div style="margin-bottom:6px">
+      <div style="display:flex;align-items:center;gap:6px;padding:3px 0;border-bottom:1px solid #f0ebe3">
+        <span class="type-badge">${li.type||'C'}</span>
+        <b style="font-size:12px">${li.meshSize||'—'}</b>
+      </div>${rowsHTML}
+    </div>`;
+  }).join('');
+
+  return `<div class="ocard order-card ${done?'done':''}" id="card-${o.id}">
+    <div class="order-header" onclick="toggleCard('${o.id}')">
+      <span class="order-no">#${o.orderNo}</span>
+      <div style="flex:1;min-width:0">
+        <div class="order-name">${esc(o.customerName)}</div>
+        <div class="order-sub">${[o.location,o.orderDate].filter(Boolean).join(' · ')}</div>
+      </div>
+      <div style="flex-shrink:0;margin-right:4px">
+        ${o.totalPrice ? `<div class="order-price">₹${Number(o.totalPrice).toLocaleString('en-IN')}</div>` : ''}
+        <div class="order-wt">${o.totalWeight||''}kg · ${o.totalNos||''}nos</div>
+      </div>
+      <span class="badge ${done?'done':'pending'}">${done?'✓ Done':'Pending'}</span>
+      <span class="chevron" id="chev-${o.id}">▼</span>
+    </div>
+    <div class="order-detail ohidden" id="detail-${o.id}">
+      ${items.length ? `<div style="background:#faf7f4;border-radius:10px;padding:10px;border:1px solid #ede8e3;margin-bottom:8px">${itemsHTML}
+        <div class="total-row"><span>${o.totalNos} Nos total</span><span style="color:#d97706">${o.totalWeight} kg</span></div>
+      </div>` : ''}
+      ${o.rate ? `<div class="rate-info">Rate: ₹${o.rate}/kg · Total: <b>₹${Number(o.totalPrice||0).toLocaleString('en-IN')}</b></div>` : ''}
+      ${o.notes ? `<div style="font-size:11px;color:#a39389;font-style:italic;margin-top:6px">${esc(o.notes)}</div>` : ''}
+      <div class="action-btns">
+        <button class="btn-s btn-sm" onclick="editOrder('${o.id}')">✏️ Edit</button>
+        <button class="${done?'btn-s':'btn-g'} btn-sm" onclick="toggleStatus('${o.id}')">${done?'↩ Reopen':'✅ Done'}</button>
+        <button class="btn-p btn-sm" onclick="sendWA('${o.id}')">📲 WhatsApp</button>
+        <button class="btn-s btn-sm" onclick="openShareCard('${o.id}')">📸 Card</button>
+        <button class="btn-d btn-sm" onclick="deleteOrder('${o.id}')">🗑️</button>
+      </div>
+    </div>
+  </div>`;
+}
+
+function toggleCard(id) {
+  const detail = document.getElementById('detail-'+id);
+  const chev = document.getElementById('chev-'+id);
+  const hidden = detail.classList.toggle('ohidden');
+  chev.textContent = hidden ? '▼' : '▲';
+}
+
+async function toggleStatus(id) {
+  await apiPost(`/api/orders/${id}/status/`, {});
+  await loadOrders();
+  toast('✅ Status updated!');
+}
+
+async function deleteOrder(id) {
+  if (!confirm('Delete this order?')) return;
+  await apiPost(`/api/orders/${id}/delete/`, {});
+  await loadOrders();
+  toast('🗑️ Deleted');
+}
+
+function sendWA(id) {
+  const o = orders.find(x => x.id === id);
+  if (!o) return;
+  const rate = parseFloat(o.rate)||0;
+  const lines = (o.lineItems||[]).map(migrateLI).map(li => {
+    const dimLines = li.rows.filter(r=>r.dims||r.qty).map(row => {
+      const lw = row.qty&&row.weightEach?(parseFloat(row.qty)*parseFloat(row.weightEach)).toFixed(3):'';
+      const ppn = row.weightEach&&rate?parseFloat((parseFloat(row.weightEach)*rate).toFixed(2)):'';
+      let line = `${row.dims} — ${row.qty} Nos`;
+      if (row.weightEach) line += ` @ *${row.weightEach} kg = ${lw} kg*`;
+      if (ppn) line += ` | ₹${Number(ppn).toLocaleString('en-IN')}/nos`;
+      return line;
+    }).join('\n');
+    if (!dimLines && !li.meshSize) return null;
+    return `  🔸️ [${li.type||'C'}] ${li.meshSize||''}\n${dimLines}`;
+  }).filter(Boolean).join('\n\n');
+  const priceStr = o.totalPrice ? `\n💰 *Total Price: ₹${Number(o.totalPrice).toLocaleString('en-IN')}*\n   (${o.totalWeight} kg × ₹${o.rate}/kg)` : '';
+  const msg = `🏭 *Shree Ambica Engineering*\n━━━━━━━━━━━━━━━━\n📋 *Order #${o.orderNo}*\n📅 Date: ${o.orderDate}\n👤 ${o.customerName}${o.location?`, ${o.location}`:''}\n━━━━━━━━━━━━━━━━\n${lines}\n━━━━━━━━━━━━━━━━\n✅ *Total Nos: ${o.totalNos}*\n⚖️ *Total Weight: ${o.totalWeight} kg*${priceStr}\n\n━━━━━━━━━━━━━━━━`;
+  window.open('https://wa.me/?text=' + encodeURIComponent(msg), '_blank');
+}
+
+// ── FORM ─────────────────────────────────────────────────────────
+let formLineItems = [];
+
+function newOrder() {
+  editingId = null;
+  formLineItems = [blankMesh()];
+  document.getElementById('formTitle').textContent = '📝 New Order';
+  renderForm({ orderNo: nextOrderNo(), orderDate: new Date().toLocaleDateString('en-IN',{day:'2-digit',month:'2-digit',year:'numeric'}), customerName:'', location:'', rate:'', totalNos:'', totalWeight:'', totalPrice:'', notes:'' });
+  showView('form');
+}
+
+function editOrder(id) {
+  const o = orders.find(x => x.id === id);
+  if (!o) return;
+  editingId = id;
+  formLineItems = (o.lineItems||[blankMesh()]).map(li => migrateLI(JSON.parse(JSON.stringify(li))));
+  document.getElementById('formTitle').textContent = '✏️ Edit Order';
+  renderForm(o);
+  showView('form');
+}
+
+function renderForm(o) {
+  document.getElementById('formContainer').innerHTML = `
+    <div style="display:flex;flex-direction:column;gap:13px">
+      <div class="grid2">
+        <div><label class="lbl">Order No</label><input type="number" id="f_orderNo" value="${o.orderNo||''}"/></div>
+        <div><label class="lbl">Date</label><input type="text" id="f_orderDate" value="${o.orderDate||''}" placeholder="dd/mm/yyyy"/></div>
+      </div>
+      <div><label class="lbl">Customer Name</label><input type="text" id="f_customerName" value="${esc(o.customerName||'')}" placeholder="e.g. Apollo Quarry"/></div>
+      <div><label class="lbl">Location</label><input type="text" id="f_location" value="${esc(o.location||'')}" placeholder="e.g. Adroli"/></div>
+      <div><label class="lbl">Rate (₹ per kg)</label><input type="number" id="f_rate" value="${o.rate||''}" placeholder="e.g. 85" oninput="onRateChange()"/></div>
+      <div>
+        <div class="flex-between" style="margin-bottom:8px">
+          <label class="lbl" style="margin:0">Items / Sizes</label>
+          <button class="btn-s btn-sm" onclick="addMeshItem()">+ Add Size</button>
+        </div>
+        <div id="lineItemsContainer"></div>
+      </div>
+      <div class="totals-box">
+        <div class="grid2" style="margin-bottom:8px">
+          <div><label class="lbl">Total Nos</label><input type="number" id="f_totalNos" value="${o.totalNos||''}" placeholder="Auto"/></div>
+          <div><label class="lbl">Total Wt (kg)</label><input type="number" id="f_totalWeight" value="${o.totalWeight||''}" placeholder="Auto"/></div>
+        </div>
+        <div class="grid2">
+          <div><label class="lbl">Total Price (₹)</label><input type="number" id="f_totalPrice" value="${o.totalPrice||''}" placeholder="Auto" style="font-weight:700;color:#b45309;background:#fff9ed;border-color:#f5d078"/></div>
+          <div><label class="lbl">Price / 1 Nos (₹)</label><input type="number" id="f_pricePerNos" value="${o.pricePerNos||''}" placeholder="Auto" readonly style="font-weight:700;color:#15803d;background:#f0fdf4;border-color:#86efac;cursor:default"/></div>
+        </div>
+        <div id="priceHint" style="margin-top:8px"></div>
+      </div>
+      <div><label class="lbl">Notes (optional)</label><input type="text" id="f_notes" value="${esc(o.notes||'')}" placeholder="Optional..."/></div>
+      <div class="grid2" style="padding-top:4px">
+        <button class="btn-ghost btn-full" onclick="showView('orders')">Cancel</button>
+        <button class="btn-p btn-full" onclick="saveOrder()">💾 Save Order</button>
+      </div>
+    </div>`;
+  renderLineItems();
+}
+
+function renderLineItems() {
+  const container = document.getElementById('lineItemsContainer');
+  if (!container) return;
+  const rate = parseFloat(document.getElementById('f_rate')?.value||'')||0;
+  container.innerHTML = formLineItems.map((li, idx) => {
+    const rowsHTML = li.rows.map((row, rIdx) => {
+      const lw = row.qty&&row.weightEach?(parseFloat(row.qty)*parseFloat(row.weightEach)).toFixed(3):'';
+      const ppn = row.weightEach&&rate?parseFloat((parseFloat(row.weightEach)*rate).toFixed(2)):'';
+      return `<div class="dim-row" id="dr-${idx}-${rIdx}">
+        <div class="dim-row-header">
+          <span class="dim-row-num">Dim #${rIdx+1}</span>
+          ${li.rows.length>1?`<button style="background:#fff0f0;color:#dc2626;border:1px solid #fca5a5;border-radius:5px;padding:3px 8px;font-size:10px;font-weight:700" onclick="removeDimRow(${idx},${rIdx})">✕ Remove</button>`:''}
+        </div>
+        <div style="display:grid;grid-template-columns:2fr 1fr 1fr;gap:8px">
+          <div><label class="lbl">Dimensions</label><input type="text" placeholder="12x5" value="${esc(row.dims||'')}" oninput="setRow(${idx},${rIdx},'dims',this.value)"/></div>
+          <div><label class="lbl">Qty (Nos)</label><input type="number" placeholder="4" value="${row.qty||''}" oninput="setRow(${idx},${rIdx},'qty',this.value)"/></div>
+          <div><label class="lbl">Wt/pc (kg)</label><input type="number" placeholder="60.5" value="${row.weightEach||''}" oninput="setRow(${idx},${rIdx},'weightEach',this.value)"/></div>
+        </div>
+        <div class="line-total" id="rt-${idx}-${rIdx}" style="${lw?'display:flex':'display:none'}">
+          ${lw?`<span style="color:#a39389">${row.qty} × ${row.weightEach} kg = <b style="color:#d97706">${lw} kg</b></span>${ppn?`<span style="color:#15803d;font-weight:700">₹${Number(ppn).toLocaleString('en-IN')}/nos</span>`:''}` : ''}
+        </div>
+      </div>`;
+    }).join('');
+    return `<div class="line-item-box" id="lb-${idx}">
+      <div class="flex-row" style="margin-bottom:9px">
+        <div style="flex:1"><label class="lbl">Mesh Size</label><input type="text" placeholder="e.g. 1780x1550" value="${esc(li.meshSize||'')}" oninput="setLI(${idx},'meshSize',this.value)"/></div>
+        <div style="flex-shrink:0"><label class="lbl">Type</label>
+          <div class="type-toggle">
+            <button class="${li.type==='C'?'active':''}" onclick="setLI(${idx},'type','C');return false">C</button>
+            <button class="${li.type==='WC'?'active':''}" onclick="setLI(${idx},'type','WC');return false">WC</button>
+          </div>
+        </div>
+      </div>
+      ${rowsHTML}
+      <button class="add-dim-btn" onclick="addDimRow(${idx})">＋ Add Dimension / Qty</button>
+      ${formLineItems.length>1?`<hr class="mesh-divider"/><div style="text-align:right;margin-top:8px"><button class="btn-d btn-sm" onclick="removeMeshItem(${idx})">🗑 Remove Size</button></div>`:''}
+    </div>`;
+  }).join('');
+}
+
+function setLI(idx,key,val){formLineItems[idx][key]=val;if(key==='type'){const box=document.getElementById('lb-'+idx);if(box)box.querySelectorAll('.type-toggle button').forEach(btn=>{btn.classList.toggle('active',btn.textContent.trim()===val);});}}
+function setRow(idx,rIdx,key,val){formLineItems[idx].rows[rIdx][key]=val;updateRowTotal(idx,rIdx);recalcForm();}
+function updateRowTotal(idx,rIdx){const row=formLineItems[idx].rows[rIdx];const rate=parseFloat(document.getElementById('f_rate')?.value||'')||0;const lw=row.qty&&row.weightEach?(parseFloat(row.qty)*parseFloat(row.weightEach)).toFixed(3):'';const ppn=row.weightEach&&rate?parseFloat((parseFloat(row.weightEach)*rate).toFixed(2)):'';const el=document.getElementById(`rt-${idx}-${rIdx}`);if(!el)return;if(lw){el.style.display='flex';el.innerHTML=`<span style="color:#a39389">${row.qty} × ${row.weightEach} kg = <b style="color:#d97706">${lw} kg</b></span>${ppn?`<span style="color:#15803d;font-weight:700">₹${Number(ppn).toLocaleString('en-IN')}/nos</span>`:''}`;}else{el.style.display='none';el.innerHTML='';}}
+function onRateChange(){formLineItems.forEach((li,idx)=>{li.rows.forEach((_,rIdx)=>updateRowTotal(idx,rIdx));});recalcForm();}
+function addMeshItem(){formLineItems.push(blankMesh());renderLineItems();}
+function removeMeshItem(idx){formLineItems.splice(idx,1);renderLineItems();recalcForm();}
+function addDimRow(idx){formLineItems[idx].rows.push({dims:'',qty:'',weightEach:''});renderLineItems();}
+function removeDimRow(idx,rIdx){formLineItems[idx].rows.splice(rIdx,1);renderLineItems();recalcForm();}
+
+function recalcForm(){
+  let nos=0,wt=0;
+  formLineItems.forEach(li=>{(li.rows||[]).forEach(row=>{nos+=parseFloat(row.qty)||0;wt+=(parseFloat(row.qty)||0)*(parseFloat(row.weightEach)||0);});});
+  const wtr=wt>0?parseFloat(wt.toFixed(3)):'';
+  const rate=parseFloat(document.getElementById('f_rate')?.value||'')||0;
+  const price=rate&&wtr?parseFloat((wtr*rate).toFixed(2)):'';
+  const ppn=price&&nos?parseFloat((price/nos).toFixed(2)):'';
+  if(document.getElementById('f_totalNos')&&nos) document.getElementById('f_totalNos').value=nos;
+  if(document.getElementById('f_totalWeight')&&wtr) document.getElementById('f_totalWeight').value=wtr;
+  if(document.getElementById('f_totalPrice')&&price) document.getElementById('f_totalPrice').value=price;
+  if(document.getElementById('f_pricePerNos')&&ppn) document.getElementById('f_pricePerNos').value=ppn;
+  const hint=document.getElementById('priceHint');
+  if(hint) hint.innerHTML=wtr&&rate?`<div class="price-hint">💡 ${wtr} kg × ₹${rate} = <b>₹${Number((wtr*rate).toFixed(2)).toLocaleString('en-IN')}</b>${nos?` · ₹${Number(ppn).toLocaleString('en-IN')} avg/nos`:''}</div>`:'';
+}
+
+async function saveOrder(){
+  const name=document.getElementById('f_customerName').value.trim();
+  if(!name){alert('Customer name required!');return;}
+  let nos=0,wt=0;
+  formLineItems.forEach(li=>{(li.rows||[]).forEach(row=>{nos+=parseFloat(row.qty)||0;wt+=(parseFloat(row.qty)||0)*(parseFloat(row.weightEach)||0);});});
+  const wtr=wt>0?parseFloat(wt.toFixed(3)):0;
+  const rate=parseFloat(document.getElementById('f_rate').value)||0;
+  const price=rate&&wtr?parseFloat((wtr*rate).toFixed(2)):0;
+  const data={
+    id: editingId||null,
+    orderNo: document.getElementById('f_orderNo').value,
+    orderDate: document.getElementById('f_orderDate').value,
+    customerName: name,
+    location: document.getElementById('f_location').value.trim(),
+    rate: document.getElementById('f_rate').value,
+    lineItems: JSON.parse(JSON.stringify(formLineItems)),
+    totalNos: nos||document.getElementById('f_totalNos').value,
+    totalWeight: wtr||document.getElementById('f_totalWeight').value,
+    totalPrice: price||document.getElementById('f_totalPrice').value,
+    pricePerNos: (price&&nos)?parseFloat((price/nos).toFixed(2)):'',
+    notes: document.getElementById('f_notes').value.trim(),
+    status: editingId?(orders.find(x=>x.id===editingId)?.status||'pending'):'pending',
+  };
+  const wasEditing=editingId;
+  await apiPost('/api/orders/save/', data);
+  editingId=null;
+  await loadOrders();
+  showView('orders');
+  toast(wasEditing?'✅ Updated!':'✅ Order saved!');
+}
+
+// ── SUMMARY ──────────────────────────────────────────────────────
+const MONTHS=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+function renderSummary(){
+  const map={};
+  orders.forEach(o=>{
+    const p=(o.orderDate||'').split('/');
+    if(p.length<3)return;
+    const k=`${p[2]}-${p[1].padStart(2,'0')}`;
+    if(!map[k])map[k]={nos:0,wt:0,price:0,count:0,done:0};
+    map[k].nos+=parseFloat(o.totalNos)||0;
+    map[k].wt+=parseFloat(o.totalWeight)||0;
+    map[k].price+=parseFloat(o.totalPrice)||0;
+    map[k].count+=1;
+    if(o.status==='completed')map[k].done+=1;
+  });
+  const rows=Object.entries(map).sort((a,b)=>b[0].localeCompare(a[0]));
+  const el=document.getElementById('summaryContainer');
+  if(!rows.length){el.innerHTML='<div class="oempty"><div class="empty-icon">📊</div><div>No data yet</div></div>';return;}
+  el.innerHTML=rows.map(([k,d])=>{
+    const[yr,mo]=k.split('-');
+    return `<div class="ocard summary-card">
+      <div class="flex-between" style="margin-bottom:12px">
+        <span class="month-title">${MONTHS[parseInt(mo)-1]} ${yr}</span>
+        <span class="month-sub">${d.count} orders · ${d.done} done</span>
+      </div>
+      <div class="grid3">
+        <div class="sum-tile"><div class="sum-val" style="color:#1c1917">${d.nos}</div><div class="sum-lbl">Total Nos</div></div>
+        <div class="sum-tile"><div class="sum-val" style="color:#d97706">${d.wt.toFixed(2)}</div><div class="sum-lbl">Weight (kg)</div></div>
+        <div class="sum-tile"><div class="sum-val" style="color:#15803d;font-size:15px">₹${Math.round(d.price).toLocaleString('en-IN')}</div><div class="sum-lbl">Revenue</div></div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+// ── SHARE CARD ───────────────────────────────────────────────────
+function closeCard(e){if(e.target===document.getElementById('cardOverlay'))document.getElementById('cardOverlay').classList.add('ohidden');}
+let _shareOrderId=null;
+function openShareCard(id){
+  _shareOrderId=id;
+  const o=orders.find(x=>x.id===id);
+  if(!o)return;
+  const rate=parseFloat(o.rate)||0;
+  const items=(o.lineItems||[]).map(migrateLI).filter(li=>li.meshSize||li.rows.some(r=>r.dims||r.qty));
+  const meshHTML=items.map(li=>{
+    const rowsHTML=li.rows.filter(r=>r.dims||r.qty).map(row=>{
+      const lw=row.qty&&row.weightEach?(parseFloat(row.qty)*parseFloat(row.weightEach)).toFixed(3):'';
+      const ppn=row.weightEach&&rate?parseFloat((parseFloat(row.weightEach)*rate).toFixed(2)):'';
+      return `<div class="sc-dim-row"><span class="sc-dim-left">${row.dims} — <b>${row.qty} Nos</b>${ppn?`<span class="sc-dim-ppn">(₹${Number(ppn).toLocaleString('en-IN')}/nos)</span>`:''}</span>
+        <span>${lw?`<span class="sc-dim-wt">${lw} kg</span>`:''}</span></div>`;
+    }).join('');
+    return `<div class="sc-mesh-block"><div class="sc-mesh-title"><span class="sc-type">${li.type||'C'}</span><span class="sc-mesh-name">${li.meshSize||'—'}</span></div>${rowsHTML}</div>`;
+  }).join('');
+  document.getElementById('shareCardContent').innerHTML=`
+    <div class="sc-header"><div class="sc-logo">⚙️ Shree Ambica Engineering</div><div class="sc-sub">Order Receipt</div>
+      <div class="sc-meta"><div class="sc-ordno">Order #${o.orderNo}</div><div class="sc-datecu">📅 ${o.orderDate}<br>👤 ${esc(o.customerName)}${o.location?`<br>📍 ${esc(o.location)}`:''}</div></div>
+    </div>
+    <div class="sc-body">${meshHTML}<div class="sc-divider"></div>
+      <div class="sc-totals">
+        <div class="sc-tile"><div class="sc-tile-val">${o.totalNos||'—'}</div><div class="sc-tile-lbl">Total Nos</div></div>
+        <div class="sc-tile"><div class="sc-tile-val" style="color:#d97706">${o.totalWeight||'—'}</div><div class="sc-tile-lbl">Total Wt</div></div>
+        <div class="sc-tile"><div class="sc-tile-val" style="color:#78716c">${o.totalNos&&o.totalWeight?parseFloat((parseFloat(o.totalWeight)/parseFloat(o.totalNos)).toFixed(2)):'—'}</div><div class="sc-tile-lbl">Wt/Nos</div></div>
+        <div class="sc-tile"><div class="sc-tile-val" style="color:#15803d;font-size:13px">₹${o.pricePerNos?Number(o.pricePerNos).toLocaleString('en-IN'):'—'}</div><div class="sc-tile-lbl">Per Nos</div></div>
+      </div>
+      <div class="sc-price-row"><span class="sc-total-label">💰 Total Price</span><span class="sc-total-price">₹${Number(o.totalPrice||0).toLocaleString('en-IN')}</span></div>
+    </div>
+    <div class="sc-footer">Shree Ambica Engineering · Order #${o.orderNo} · ${o.orderDate}</div>`;
+  document.getElementById('cardOverlay').classList.remove('ohidden');
+}
+
+async function doShare(){
+  const o=orders.find(x=>x.id===_shareOrderId);
+  if(!o)return;
+  const btn=document.querySelector('#cardOverlay .btn-p');
+  btn.textContent='⏳ Generating...';btn.disabled=true;
+  try{
+    const el=document.getElementById('shareCardContent');
+    const canvas=await html2canvas(el,{scale:2.5,useCORS:true,backgroundColor:'#ffffff'});
+    canvas.toBlob(async blob=>{
+      const fileName=`SAE_Order${o.orderNo}_${o.customerName.replace(/\s+/g,'_')}.png`;
+      const file=new File([blob],fileName,{type:'image/png'});
+      if(navigator.canShare&&navigator.canShare({files:[file]})){
+        await navigator.share({files:[file],title:`SAE Order #${o.orderNo}`});
+      }else{
+        const url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download=fileName;a.click();URL.revokeObjectURL(url);
+        toast('📥 Image downloaded!');
+      }
+      btn.textContent='📤 Share / Download';btn.disabled=false;
+    },'image/png');
+  }catch(e){btn.textContent='📤 Share / Download';btn.disabled=false;toast('❌ Could not generate image');}
+}
+
+function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
+
+// ── INIT ─────────────────────────────────────────────────────────
+loadOrders();
+</script>
+{% endblock %}

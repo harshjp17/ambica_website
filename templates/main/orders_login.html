@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>SAE — Secure Access</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@700;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap');
+
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{height:100%;overflow:hidden}
+
+  body{
+    font-family:'Plus Jakarta Sans',sans-serif;
+    background:#0a0a0a;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    min-height:100vh;
+    position:relative;
+  }
+
+  /* Animated mesh background */
+  .bg-mesh{
+    position:fixed;inset:0;
+    background:
+      linear-gradient(rgba(232,114,12,.06) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(232,114,12,.06) 1px, transparent 1px);
+    background-size:40px 40px;
+    animation:meshMove 20s linear infinite;
+  }
+  @keyframes meshMove{
+    0%{background-position:0 0}
+    100%{background-position:40px 40px}
+  }
+
+  /* Glowing blobs */
+  .blob{position:fixed;border-radius:50%;filter:blur(80px);pointer-events:none}
+  .blob-1{width:500px;height:500px;background:rgba(232,114,12,.15);top:-100px;right:-100px;animation:float1 8s ease-in-out infinite alternate}
+  .blob-2{width:400px;height:400px;background:rgba(21,101,192,.1);bottom:-100px;left:-100px;animation:float2 10s ease-in-out infinite alternate}
+  .blob-3{width:200px;height:200px;background:rgba(232,114,12,.2);top:50%;left:50%;transform:translate(-50%,-50%);animation:pulse 4s ease-in-out infinite}
+  @keyframes float1{from{transform:translate(0,0)}to{transform:translate(-30px,30px)}}
+  @keyframes float2{from{transform:translate(0,0)}to{transform:translate(30px,-30px)}}
+  @keyframes pulse{0%,100%{opacity:.3;transform:translate(-50%,-50%) scale(1)}50%{opacity:.6;transform:translate(-50%,-50%) scale(1.2)}}
+
+  /* Card */
+  .card{
+    position:relative;z-index:10;
+    width:100%;max-width:400px;
+    margin:1rem;
+    background:rgba(255,255,255,.04);
+    border:1px solid rgba(255,255,255,.1);
+    border-radius:24px;
+    padding:2.5rem 2rem;
+    backdrop-filter:blur(20px);
+    -webkit-backdrop-filter:blur(20px);
+    box-shadow:0 0 0 1px rgba(232,114,12,.1), 0 40px 80px rgba(0,0,0,.5);
+    animation:cardIn .6s cubic-bezier(.34,1.56,.64,1) both;
+  }
+  @keyframes cardIn{
+    from{opacity:0;transform:translateY(30px) scale(.95)}
+    to{opacity:1;transform:translateY(0) scale(1)}
+  }
+
+  /* Logo area */
+  .logo-wrap{text-align:center;margin-bottom:2rem}
+  .gear-icon{
+    width:64px;height:64px;
+    background:linear-gradient(135deg,#e8720c,#c05a06);
+    border-radius:18px;
+    display:inline-flex;align-items:center;justify-content:center;
+    font-size:32px;
+    margin-bottom:1rem;
+    box-shadow:0 8px 32px rgba(232,114,12,.4);
+    animation:gearSpin 10s linear infinite;
+  }
+  @keyframes gearSpin{
+    0%,100%{box-shadow:0 8px 32px rgba(232,114,12,.4)}
+    50%{box-shadow:0 8px 48px rgba(232,114,12,.7)}
+  }
+  .logo-title{
+    font-family:'Barlow Condensed',sans-serif;
+    font-size:28px;font-weight:900;
+    color:#fff;letter-spacing:.5px;
+    line-height:1;
+  }
+  .logo-sub{
+    font-size:11px;font-weight:600;
+    color:rgba(255,255,255,.4);
+    letter-spacing:2px;text-transform:uppercase;
+    margin-top:6px;
+  }
+
+  /* Divider */
+  .divider{
+    display:flex;align-items:center;gap:12px;
+    margin-bottom:1.75rem;
+  }
+  .divider-line{flex:1;height:1px;background:rgba(255,255,255,.1)}
+  .divider-text{font-size:10px;color:rgba(255,255,255,.3);font-weight:700;letter-spacing:2px;text-transform:uppercase;white-space:nowrap}
+
+  /* Form */
+  .field{margin-bottom:1.25rem}
+  .field label{
+    display:block;font-size:10px;font-weight:700;
+    letter-spacing:1.5px;text-transform:uppercase;
+    color:rgba(255,255,255,.4);margin-bottom:8px;
+  }
+  .input-wrap{position:relative}
+  .input-icon{
+    position:absolute;left:14px;top:50%;transform:translateY(-50%);
+    font-size:16px;pointer-events:none;
+  }
+  .field input{
+    width:100%;
+    background:rgba(255,255,255,.06);
+    border:1px solid rgba(255,255,255,.1);
+    border-radius:12px;
+    padding:13px 14px 13px 44px;
+    color:#fff;font-size:15px;font-family:'Plus Jakarta Sans',sans-serif;
+    outline:none;
+    transition:all .2s;
+  }
+  .field input::placeholder{color:rgba(255,255,255,.2)}
+  .field input:focus{
+    border-color:rgba(232,114,12,.6);
+    background:rgba(232,114,12,.06);
+    box-shadow:0 0 0 3px rgba(232,114,12,.1);
+  }
+
+  /* Error */
+  .error-box{
+    background:rgba(220,38,38,.15);
+    border:1px solid rgba(220,38,38,.3);
+    border-radius:10px;
+    padding:10px 14px;
+    margin-bottom:1.25rem;
+    display:flex;align-items:center;gap:8px;
+    font-size:13px;color:#fca5a5;font-weight:500;
+  }
+
+  /* Submit btn */
+  .btn-login{
+    width:100%;padding:15px;
+    background:linear-gradient(135deg,#e8720c,#c05a06);
+    color:#fff;border:none;border-radius:12px;
+    font-family:'Plus Jakarta Sans',sans-serif;
+    font-size:15px;font-weight:700;
+    cursor:pointer;
+    position:relative;overflow:hidden;
+    transition:all .2s;
+    box-shadow:0 8px 32px rgba(232,114,12,.35);
+    letter-spacing:.3px;
+  }
+  .btn-login::before{
+    content:'';position:absolute;inset:0;
+    background:linear-gradient(135deg,rgba(255,255,255,.15),transparent);
+    opacity:0;transition:opacity .2s;
+  }
+  .btn-login:hover{transform:translateY(-2px);box-shadow:0 12px 40px rgba(232,114,12,.5)}
+  .btn-login:hover::before{opacity:1}
+  .btn-login:active{transform:translateY(0)}
+
+  /* Security badge */
+  .security-badge{
+    display:flex;align-items:center;justify-content:center;gap:6px;
+    margin-top:1.5rem;
+    font-size:11px;color:rgba(255,255,255,.25);font-weight:600;
+  }
+
+  /* Floating wire mesh pattern on card */
+  .card-pattern{
+    position:absolute;top:0;right:0;
+    width:120px;height:120px;
+    opacity:.05;pointer-events:none;overflow:hidden;border-radius:0 24px 0 0;
+  }
+  .card-pattern svg{width:100%;height:100%}
+
+  /* Stats strip at bottom */
+  .stats-strip{
+    position:fixed;bottom:0;left:0;right:0;z-index:5;
+    display:flex;justify-content:center;gap:2rem;
+    padding:12px;
+    background:rgba(0,0,0,.4);
+    border-top:1px solid rgba(255,255,255,.05);
+    backdrop-filter:blur(10px);
+  }
+  .stat-item{text-align:center}
+  .stat-val{font-family:'Barlow Condensed',sans-serif;font-size:18px;font-weight:900;color:#e8720c}
+  .stat-lbl{font-size:9px;color:rgba(255,255,255,.3);letter-spacing:1px;text-transform:uppercase;font-weight:600}
+
+  @media(max-width:480px){
+    .card{padding:2rem 1.5rem}
+    .stats-strip{gap:1rem}
+    html,body{overflow:auto}
+  }
+</style>
+</head>
+<body>
+
+<div class="bg-mesh"></div>
+<div class="blob blob-1"></div>
+<div class="blob blob-2"></div>
+<div class="blob blob-3"></div>
+
+<div class="card">
+  <!-- Decorative pattern -->
+  <div class="card-pattern">
+    <svg viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <pattern id="p" width="15" height="15" patternUnits="userSpaceOnUse">
+          <path d="M 15 0 L 0 0 0 15" fill="none" stroke="#e8720c" stroke-width="1"/>
+        </pattern>
+      </defs>
+      <rect width="120" height="120" fill="url(#p)"/>
+    </svg>
+  </div>
+
+  <!-- Logo -->
+  <div class="logo-wrap">
+    <div class="gear-icon">⚙️</div>
+    <div class="logo-title">Shree Ambica<br>Engineering</div>
+    <div class="logo-sub">Order Management System</div>
+  </div>
+
+  <!-- Divider -->
+  <div class="divider">
+    <div class="divider-line"></div>
+    <div class="divider-text">Secure Access</div>
+    <div class="divider-line"></div>
+  </div>
+
+  <!-- Error -->
+  {% if error %}
+  <div class="error-box">
+    🔒 {{ error }}
+  </div>
+  {% endif %}
+
+  <!-- Form -->
+  <form method="POST">
+    {% csrf_token %}
+    <div class="field">
+      <label>Username</label>
+      <div class="input-wrap">
+        <span class="input-icon">👤</span>
+        <input type="text" name="username" placeholder="Enter your username" autocomplete="username" autofocus required/>
+      </div>
+    </div>
+    <div class="field">
+      <label>Password</label>
+      <div class="input-wrap">
+        <span class="input-icon">🔑</span>
+        <input type="password" name="password" placeholder="Enter your password" autocomplete="current-password" required/>
+      </div>
+    </div>
+    <button type="submit" class="btn-login">
+      🚀 Access Order Manager
+    </button>
+  </form>
+
+  <!-- Security badge -->
+  <div class="security-badge">
+    🛡️ Secured · Private Access Only · Shree Ambica Engineering
+  </div>
+</div>
+
+<!-- Stats strip -->
+<div class="stats-strip">
+  <div class="stat-item"><div class="stat-val">27+</div><div class="stat-lbl">Years</div></div>
+  <div class="stat-item"><div class="stat-val">500+</div><div class="stat-lbl">Clients</div></div>
+  <div class="stat-item"><div class="stat-val">PAN</div><div class="stat-lbl">India</div></div>
+  <div class="stat-item"><div class="stat-val">1997</div><div class="stat-lbl">Est.</div></div>
+</div>
+
+</body>
+</html>

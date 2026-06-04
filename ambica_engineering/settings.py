@@ -122,3 +122,5 @@ else:
         'https://ambicaeng.co.in',
         'https://www.ambicaeng.co.in',
     ]
+
+    LOGIN_URL = '/orders/login/'
