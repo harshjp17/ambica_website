@@ -115,3 +115,9 @@ def orders_status(request, order_id):
     o.status = 'completed' if o.status == 'pending' else 'pending'
     o.save()
     return JsonResponse({'status': o.status})
+
+from django.contrib.auth.decorators import login_required
+
+@login_required
+def orders(request):
+    return render(request, 'main/orders.html', {'page': 'orders'})

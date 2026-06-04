@@ -24,8 +24,7 @@ Visit: **http://127.0.0.1:8000**
 ## Admin Panel
 
 URL      : http://127.0.0.1:8000/admin/
-Username : **ambica6666**
-Password : **harsh@ambica18**
+
 
 The admin panel lets you:
 - View and manage all customer enquiries from the Contact form
