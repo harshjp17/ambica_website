@@ -321,7 +321,7 @@ async function deleteOrder(id) {
 }
 
 function sendWA(id) {
-  const o = orders.find(x => x.id === id);
+  const o = orders.find(x => x.id == id);
   if (!o) return;
   const rate = parseFloat(o.rate)||0;
   const lines = (o.lineItems||[]).map(migrateLI).map(li => {
@@ -353,7 +353,7 @@ function newOrder() {
 }
 
 function editOrder(id) {
-  const o = orders.find(x => x.id === id);
+  const o = orders.find(x => x.id == id);
   if (!o) return;
   editingId = id;
   formLineItems = (o.lineItems||[blankMesh()]).map(li => migrateLI(JSON.parse(JSON.stringify(li))));
@@ -533,7 +533,7 @@ function closeCard(e){if(e.target===document.getElementById('cardOverlay'))docum
 let _shareOrderId=null;
 function openShareCard(id){
   _shareOrderId=id;
-  const o=orders.find(x=>x.id===id);
+  const o=orders.find(x=>x.id==id);
   if(!o)return;
   const rate=parseFloat(o.rate)||0;
   const items=(o.lineItems||[]).map(migrateLI).filter(li=>li.meshSize||li.rows.some(r=>r.dims||r.qty));
