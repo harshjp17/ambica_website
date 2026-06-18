@@ -13,4 +13,5 @@ urlpatterns = [
     path('api/orders/<int:order_id>/status/', views.orders_status, name='orders_status'),
     path('orders/login/',  views.orders_login,  name='orders_login'),
     path('orders/logout/', views.orders_logout, name='orders_logout'),
+    path('quote/', views.quote, name='quote'),
 ]

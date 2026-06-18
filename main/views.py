@@ -128,3 +128,7 @@ from django.contrib.auth.decorators import login_required
 @login_required
 def orders(request):
     return render(request, 'main/orders.html', {'page': 'orders'})
+
+@login_required(login_url='/orders/login/')
+def quote(request):
+    return render(request, 'main/quote.html')

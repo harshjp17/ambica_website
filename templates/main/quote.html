@@ -1,0 +1,759 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>SAE · Quotation Tool</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400&family=Outfit:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #0c0e14;
+  --bg2: #111520;
+  --card: #161a24;
+  --card2: #1c2130;
+  --border: #252d3d;
+  --border2: #1e2535;
+  --amber: #f59e0b;
+  --amber2: #fbbf24;
+  --amber-glow: rgba(245,158,11,0.15);
+  --amber-dim: rgba(245,158,11,0.08);
+  --text: #e2e8f0;
+  --text2: #cbd5e1;
+  --muted: #4a5568;
+  --subtle: #718096;
+  --green: #10b981;
+  --green-dim: rgba(16,185,129,0.12);
+  --red: #f87171;
+  --red-dim: rgba(248,113,113,0.1);
+  --inp: #0a0d14;
+  --shadow: 0 4px 24px rgba(0,0,0,0.4);
+  --radius: 12px;
+}
+[data-theme="light"] {
+  --bg: #f0f4f8;
+  --bg2: #e8edf5;
+  --card: #ffffff;
+  --card2: #f8fafc;
+  --border: #dde3ee;
+  --border2: #e8edf5;
+  --text: #1a2035;
+  --text2: #2d3a52;
+  --muted: #94a3b8;
+  --subtle: #64748b;
+  --inp: #f8fafc;
+  --shadow: 0 4px 24px rgba(0,0,0,0.08);
+  --amber-glow: rgba(245,158,11,0.1);
+  --amber-dim: rgba(245,158,11,0.06);
+  --green-dim: rgba(16,185,129,0.08);
+  --red-dim: rgba(248,113,113,0.07);
+}
+
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
+html,body{min-height:100vh;background:var(--bg);color:var(--text);font-family:'Outfit',sans-serif;font-size:15px;}
+input,select,textarea{font-family:'Outfit',sans-serif;}
+
+/* ── HEADER ──────────────────────────────────── */
+.hdr{
+  background:var(--bg2);
+  border-bottom:2px solid var(--amber);
+  padding:14px 16px;
+  display:flex;align-items:center;gap:12px;
+  position:sticky;top:0;z-index:100;
+}
+.hdr-hex{font-size:28px;color:var(--amber);line-height:1;flex-shrink:0;}
+.hdr-info{flex:1;}
+.hdr-name{font-size:15px;font-weight:800;letter-spacing:.1em;color:var(--text);line-height:1.2;}
+.hdr-sub{font-size:10px;color:var(--muted);letter-spacing:.06em;margin-top:2px;font-family:'Space Mono',monospace;}
+.hdr-right{display:flex;align-items:center;gap:8px;}
+.theme-btn{
+  background:var(--card);border:1px solid var(--border);
+  border-radius:8px;padding:8px 10px;cursor:pointer;
+  font-size:16px;color:var(--text);transition:.2s;
+  display:flex;align-items:center;justify-content:center;
+}
+.theme-btn:active{transform:scale(.93);}
+.quot-chip{
+  background:var(--amber-dim);border:1px solid var(--amber);
+  border-radius:8px;padding:5px 10px;text-align:right;
+}
+.quot-chip-lbl{font-size:8px;letter-spacing:.15em;color:var(--amber);font-family:'Space Mono',monospace;}
+.quot-chip-no{font-size:11px;font-weight:700;color:var(--text);font-family:'Space Mono',monospace;}
+
+/* ── MAIN BODY ───────────────────────────────── */
+.body{padding:14px 12px 100px;max-width:680px;margin:0 auto;display:flex;flex-direction:column;gap:14px;}
+
+/* ── CARD ────────────────────────────────────── */
+.card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:16px;box-shadow:var(--shadow);}
+.card-title{
+  font-size:10px;font-weight:700;letter-spacing:.18em;
+  color:var(--amber);margin-bottom:14px;
+  display:flex;align-items:center;gap:7px;
+  font-family:'Space Mono',monospace;
+}
+.card-title .dot{width:7px;height:7px;background:var(--amber);border-radius:50%;flex-shrink:0;}
+
+/* ── FIELDS ──────────────────────────────────── */
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+.row3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;}
+.fg{display:flex;flex-direction:column;gap:5px;margin-bottom:10px;}
+.fg:last-child{margin-bottom:0;}
+.lbl{font-size:9px;font-weight:700;letter-spacing:.18em;color:var(--muted);font-family:'Space Mono',monospace;}
+input,select{
+  background:var(--inp);border:1.5px solid var(--border);border-radius:8px;
+  color:var(--text);padding:10px 12px;font-size:13px;width:100%;
+  outline:none;transition:border-color .2s,box-shadow .2s;
+  appearance:none;-webkit-appearance:none;
+}
+select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%23718096'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 12px center;padding-right:32px;}
+input:focus,select:focus{border-color:var(--amber);box-shadow:0 0 0 3px var(--amber-glow);}
+input::placeholder{color:var(--muted);}
+input[type="date"]{color-scheme:dark;}
+[data-theme="light"] input[type="date"]{color-scheme:light;}
+
+/* Rate input */
+.rate-wrap{display:flex;border:1.5px solid var(--amber);border-radius:8px;overflow:hidden;background:var(--inp);}
+.rate-pre{padding:10px 10px;background:var(--amber-dim);color:var(--amber);font-weight:800;font-size:14px;flex-shrink:0;}
+.rate-inp{flex:1;background:transparent;border:none;color:var(--text);padding:10px 8px;font-size:14px;font-weight:700;outline:none;width:100%;}
+.rate-suf{padding:10px 10px;color:var(--muted);font-size:11px;font-family:'Space Mono',monospace;flex-shrink:0;align-self:center;}
+
+/* ── CALC PREVIEW ────────────────────────────── */
+.calc-prev{
+  background:var(--amber-dim);border:1px solid rgba(245,158,11,.2);
+  border-radius:8px;padding:9px 12px;font-size:11px;
+  color:var(--subtle);margin-bottom:10px;line-height:1.6;
+  font-family:'Space Mono',monospace;
+}
+.calc-prev b{color:var(--amber);}
+
+/* ── CLAMP ───────────────────────────────────── */
+.clamp-row{display:flex;align-items:center;gap:10px;margin-bottom:10px;flex-wrap:wrap;}
+.clamp-toggle{
+  background:var(--card2);border:1.5px solid var(--border);
+  border-radius:8px;color:var(--subtle);padding:10px 14px;
+  font-size:11px;font-weight:700;letter-spacing:.1em;cursor:pointer;
+  font-family:'Space Mono',monospace;transition:.2s;white-space:nowrap;
+}
+.clamp-toggle.on{background:var(--green-dim);border-color:var(--green);color:var(--green);}
+.clamp-toggle:active{transform:scale(.95);}
+.clamp-wt-wrap{flex:1;min-width:130px;}
+
+/* ── ITEM TOTAL ──────────────────────────────── */
+.item-total{
+  background:var(--amber-dim);border:1px solid rgba(245,158,11,.25);
+  border-radius:9px;padding:10px 14px;
+  display:flex;justify-content:space-between;align-items:center;
+}
+.item-total-info{font-size:12px;color:var(--subtle);line-height:1.5;}
+.item-total-amt{font-size:18px;font-weight:800;color:var(--amber);}
+
+/* ── ITEM HEADER ─────────────────────────────── */
+.item-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;}
+.item-hdr-title{font-size:10px;font-weight:700;letter-spacing:.18em;color:var(--amber);display:flex;align-items:center;gap:7px;font-family:'Space Mono',monospace;}
+.rm-btn{background:var(--red-dim);border:1px solid rgba(248,113,113,.3);border-radius:6px;color:var(--red);padding:6px 12px;font-size:10px;cursor:pointer;font-family:'Space Mono',monospace;font-weight:700;letter-spacing:.05em;}
+.rm-btn:active{transform:scale(.93);}
+
+/* ── ADD ITEM BTN ────────────────────────────── */
+.add-btn{
+  background:transparent;border:2px dashed var(--border);
+  border-radius:var(--radius);color:var(--muted);padding:15px;
+  font-size:13px;font-weight:600;cursor:pointer;width:100%;
+  font-family:'Outfit',sans-serif;letter-spacing:.04em;transition:.2s;
+}
+.add-btn:hover{border-color:var(--amber);color:var(--amber);}
+.add-btn:active{transform:scale(.98);}
+
+/* ── SUMMARY CARD ────────────────────────────── */
+.sum-row{display:flex;justify-content:space-between;align-items:flex-start;padding:9px 0;border-bottom:1px solid var(--border2);gap:8px;}
+.sum-lbl{font-size:12px;font-weight:600;color:var(--text2);line-height:1.4;}
+.sum-meta{font-size:10px;color:var(--muted);font-family:'Space Mono',monospace;}
+.sum-amt{font-size:13px;font-weight:700;color:var(--subtle);white-space:nowrap;}
+.div{border-top:2px solid var(--border);margin:10px 0;}
+.tot-row{display:flex;justify-content:space-between;font-size:12px;color:var(--muted);margin-bottom:8px;font-family:'Space Mono',monospace;}
+.grand{
+  background:var(--amber-dim);border:2px solid var(--amber);
+  border-radius:10px;padding:13px 15px;
+  display:flex;justify-content:space-between;align-items:center;
+  margin-bottom:5px;
+}
+.grand-lbl{font-size:12px;font-weight:700;color:var(--subtle);letter-spacing:.06em;font-family:'Space Mono',monospace;}
+.grand-amt{font-size:20px;font-weight:900;color:var(--amber);}
+.gst-note{font-size:10px;color:var(--muted);text-align:right;margin-bottom:16px;font-family:'Space Mono',monospace;}
+
+/* ── BUTTONS ─────────────────────────────────── */
+.preview-btn{
+  background:var(--card2);border:1.5px solid var(--border);
+  border-radius:10px;color:var(--subtle);padding:13px;
+  font-size:13px;font-weight:600;cursor:pointer;width:100%;
+  margin-bottom:9px;font-family:'Outfit',sans-serif;
+  display:flex;align-items:center;justify-content:center;gap:6px;
+  transition:.2s;
+}
+.preview-btn:active{transform:scale(.98);}
+.wa-btn{
+  background:#25d366;border:none;border-radius:10px;
+  color:#fff;padding:14px;font-size:14px;font-weight:700;
+  cursor:pointer;width:100%;font-family:'Outfit',sans-serif;
+  display:flex;align-items:center;justify-content:center;gap:8px;
+  transition:.2s;
+}
+.wa-btn:active{transform:scale(.98);background:#1ebe5c;}
+
+/* ── MODAL ───────────────────────────────────── */
+.modal-ov{
+  position:fixed;inset:0;background:rgba(0,0,0,.88);
+  z-index:999;display:none;flex-direction:column;
+  padding:0;
+}
+.modal-ov.open{display:flex;}
+.modal-box{
+  background:var(--card);border-top-left-radius:18px;border-top-right-radius:18px;
+  border:1px solid var(--border);
+  width:100%;max-height:90vh;display:flex;flex-direction:column;
+  margin-top:auto;
+}
+.modal-drag{width:40px;height:4px;background:var(--border);border-radius:2px;margin:10px auto 0;}
+.modal-hdr{
+  padding:12px 16px;border-bottom:1px solid var(--border);
+  display:flex;justify-content:space-between;align-items:center;
+  font-size:13px;font-weight:700;color:var(--amber);
+  font-family:'Space Mono',monospace;
+}
+.modal-close{background:none;border:none;color:var(--muted);font-size:18px;cursor:pointer;padding:4px;}
+.modal-scroll{flex:1;overflow-y:auto;padding:12px;}
+.modal-foot{
+  padding:12px 16px;border-top:1px solid var(--border);
+  display:flex;flex-direction:column;gap:8px;
+}
+.ss-tip{font-size:11px;color:var(--muted);text-align:center;padding:4px 0;font-family:'Space Mono',monospace;}
+
+/* ── WA CARD ─────────────────────────────────── */
+#wa-card{
+  background:#fff;border-radius:10px;overflow:hidden;
+  font-family:'Outfit',sans-serif;width:100%;min-width:0;
+}
+.wc-top{
+  background:linear-gradient(135deg,#1a2744 0%,#0f172a 100%);
+  padding:14px 16px;display:flex;align-items:center;gap:10px;
+}
+.wc-hex{font-size:24px;color:#f59e0b;flex-shrink:0;}
+.wc-co{color:#fff;font-size:14px;font-weight:800;letter-spacing:.08em;line-height:1.2;}
+.wc-sub{color:#64748b;font-size:10px;margin-top:2px;}
+.wc-qbadge{margin-left:auto;text-align:right;flex-shrink:0;}
+.wc-qno{color:#f59e0b;font-size:11px;font-weight:700;font-family:'Space Mono',monospace;}
+.wc-qdate{color:#64748b;font-size:10px;margin-top:2px;}
+.wc-cust{
+  background:#f8fafc;border-left:4px solid #f59e0b;
+  padding:10px 14px;border-bottom:1px solid #e2e8f0;
+}
+.wc-cust-lbl{font-size:8px;letter-spacing:.18em;color:#94a3b8;font-weight:700;margin-bottom:3px;font-family:'Space Mono',monospace;}
+.wc-cust-name{font-size:14px;font-weight:800;color:#1e293b;}
+.wc-cust-addr{font-size:11px;color:#64748b;margin-top:2px;}
+/* Static item cards instead of scrollable table */
+.wc-items{padding:10px 14px;}
+.wc-item{
+  background:#f8fafc;border:1px solid #e2e8f0;border-radius:8px;
+  padding:10px 12px;margin-bottom:8px;
+}
+.wc-item:last-child{margin-bottom:0;}
+.wc-item-hdr{
+  display:flex;justify-content:space-between;align-items:center;
+  margin-bottom:6px;padding-bottom:6px;border-bottom:1px solid #e2e8f0;
+}
+.wc-item-no{font-size:9px;color:#94a3b8;font-weight:700;letter-spacing:.1em;font-family:'Space Mono',monospace;}
+.wc-item-mesh{font-size:13px;font-weight:800;color:#b45309;}
+.wc-item-amt{font-size:13px;font-weight:800;color:#1e293b;}
+.wc-item-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:4px 8px;}
+.wc-item-cell{font-size:10px;color:#475569;}
+.wc-item-cell span{display:block;font-size:9px;color:#94a3b8;margin-bottom:1px;font-family:'Space Mono',monospace;}
+.wc-tots{padding:10px 14px;background:#f8fafc;border-top:1px solid #e2e8f0;}
+.wc-tot-row{display:flex;justify-content:space-between;font-size:11px;color:#64748b;margin-bottom:6px;}
+.wc-grand{
+  display:flex;justify-content:space-between;align-items:center;
+  background:#1e293b;border-radius:8px;padding:10px 14px;
+}
+.wc-grand-lbl{color:#94a3b8;font-size:11px;font-weight:600;letter-spacing:.06em;}
+.wc-grand-amt{color:#f59e0b;font-size:18px;font-weight:900;}
+.wc-foot{
+  background:#f1f5f9;padding:12px 14px;
+  border-top:1px solid #e2e8f0;
+}
+.wc-foot-note{font-size:9px;color:#94a3b8;margin-bottom:3px;}
+.wc-sig{text-align:right;margin-top:8px;}
+.wc-sig-lbl{font-size:9px;color:#94a3b8;}
+.wc-sig-line{border-top:1px solid #cbd5e1;width:130px;margin-left:auto;margin:6px 0 3px auto;}
+.wc-sig-name{font-size:9px;font-weight:700;color:#475569;letter-spacing:.05em;}
+
+/* ── MISC ────────────────────────────────────── */
+input[type=number]::-webkit-inner-spin-button{opacity:.5;}
+@media(min-width:480px){.row3{grid-template-columns:1fr 1fr 1fr;}}
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<div class="hdr">
+  <div class="hdr-hex">⬡</div>
+  <div class="hdr-info">
+    <div class="hdr-name">SHREE AMBICA ENGINEERING</div>
+    <div class="hdr-sub">WIRE MESH · QUOTATION TOOL</div>
+  </div>
+  <div class="hdr-right">
+    <button class="theme-btn" onclick="toggleTheme()" id="theme-icon">☀️</button>
+    <a href="/orders/logout/" style="text-decoration:none"><button class="theme-btn" style="font-size:13px;padding:6px 10px;color:#f87171;border-color:#f87171">🚪</button></a>
+    <div class="quot-chip">
+      <div class="quot-chip-lbl">QUOT NO</div>
+      <div class="quot-chip-no" id="qno-display"></div>
+    </div>
+  </div>
+</div>
+
+<div class="body">
+
+  <!-- CUSTOMER DETAILS -->
+  <div class="card">
+    <div class="card-title"><span class="dot"></span>CUSTOMER DETAILS</div>
+    <div class="row2">
+      <div class="fg">
+        <label class="lbl">DATE</label>
+        <input type="date" id="cust-date">
+      </div>
+      <div class="fg">
+        <label class="lbl">QUOTATION NO</label>
+        <input type="text" id="cust-qno" placeholder="e.g. SAE-001">
+      </div>
+    </div>
+    <div class="fg">
+      <label class="lbl">CUSTOMER NAME</label>
+      <input type="text" id="cust-name" placeholder="Enter customer name">
+    </div>
+    <div class="fg" style="margin-bottom:0">
+      <label class="lbl">ADDRESS / COMPANY</label>
+      <input type="text" id="cust-addr" placeholder="Address or company name">
+    </div>
+  </div>
+
+  <!-- ITEMS CONTAINER -->
+  <div id="items-container"></div>
+
+  <!-- ADD ITEM -->
+  <button class="add-btn" onclick="addItem()">＋ Add Another Item</button>
+
+  <!-- SUMMARY -->
+  <div class="card" id="summary-card">
+    <div class="card-title"><span class="dot"></span>QUOTATION SUMMARY</div>
+    <div id="sum-rows"></div>
+    <div class="div"></div>
+    <div class="tot-row"><span>TOTAL WEIGHT</span><span id="sum-wt">0.00 kg</span></div>
+    <div class="grand">
+      <span class="grand-lbl">GRAND TOTAL</span>
+      <span class="grand-amt" id="sum-total">₹ 0.00</span>
+    </div>
+    <div class="gst-note">* Prices exclusive of GST</div>
+    <button class="preview-btn" onclick="openCard()">👁 Preview WhatsApp Card</button>
+    <button class="wa-btn" onclick="sendWA()">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+      Share on WhatsApp
+    </button>
+  </div>
+
+</div>
+
+<!-- MODAL: WA CARD PREVIEW -->
+<div class="modal-ov" id="modal">
+  <div class="modal-box">
+    <div class="modal-drag"></div>
+    <div class="modal-hdr">
+      <span>📋 QUOTATION CARD PREVIEW</span>
+      <button class="modal-close" onclick="closeCard()">✕</button>
+    </div>
+    <div class="modal-scroll">
+      <div id="wa-card"></div>
+    </div>
+    <div class="modal-foot">
+      <div class="ss-tip">📸 Screenshot the card above to share as image</div>
+      <button class="wa-btn" onclick="sendWA();closeCard();">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+        Send as WhatsApp Text
+      </button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ── DATA ─────────────────────────────────────────────────
+const MESH = {
+  "7×3":1.14,"6×3":1.28,"5×3":1.45,"4×3":1.72,
+  "4×2.5":1.26,"4.5×2":1.00,"4.5×3":1.55,
+  "3.5×2":1.00,"3.5×2.5":1.37,
+  "40×10":2.44,"50×10":2.03,"38×8":1.70,"28×8":2.18,
+  "30×8":2.03,"26×8":2.31,"25×8":2.38,"24×8":2.45,"22×8":2.62,
+  "20×6":1.71,"18×6":1.85,"12×6":2.53,"12×5":1.83,
+  "11×5":1.95,"10×5":2.35,"10×4":1.43,"8×4":1.68,"6×4":2.15
+};
+const GROUPS = [
+  {label:"Fine Wire (3mm)",keys:["7×3","6×3","5×3","4×3","4.5×3","4×2.5","4.5×2","3.5×2","3.5×2.5"]},
+  {label:"Heavy Wire (8-10mm)",keys:["40×10","50×10","38×8","28×8","30×8","26×8","25×8","24×8","22×8"]},
+  {label:"Medium Wire (4-6mm)",keys:["20×6","18×6","12×6","12×5","11×5","10×5","10×4","8×4","6×4"]}
+];
+const MONTHS=["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+
+let items = [];
+let itemIdCounter = 0;
+
+// ── INIT ─────────────────────────────────────────────────
+function init() {
+  const qno = genQNo();
+  document.getElementById('cust-qno').value = qno;
+  document.getElementById('qno-display').textContent = qno;
+  const today = new Date().toISOString().split('T')[0];
+  document.getElementById('cust-date').value = today;
+  addItem();
+  ['cust-name','cust-addr','cust-date'].forEach(id=>{
+    document.getElementById(id).addEventListener('input', updateSummary);
+  });
+  document.getElementById('cust-qno').addEventListener('input', function(){
+    document.getElementById('qno-display').textContent = this.value;
+  });
+}
+
+function genQNo() {
+  const d = new Date();
+  const r = String(Math.floor(Math.random()*900)+100);
+  return `SAE-${d.getFullYear()}${String(d.getMonth()+1).padStart(2,'0')}${String(d.getDate()).padStart(2,'0')}-${r}`;
+}
+
+// ── THEME ─────────────────────────────────────────────────
+function toggleTheme() {
+  const html = document.documentElement;
+  const isDark = html.dataset.theme === 'dark';
+  html.dataset.theme = isDark ? 'light' : 'dark';
+  document.getElementById('theme-icon').textContent = isDark ? '☀️' : '🌙';
+}
+
+// ── SELECT OPTIONS ─────────────────────────────────────────
+function buildMeshOptions() {
+  return GROUPS.map(g =>
+    `<optgroup label="${g.label}">${g.keys.map(k =>
+      `<option value="${k}">${k} mm &nbsp;·&nbsp; ${MESH[k]} kg/sqft</option>`
+    ).join('')}</optgroup>`
+  ).join('');
+}
+
+// ── ADD ITEM ───────────────────────────────────────────────
+function addItem() {
+  const id = ++itemIdCounter;
+  items.push({id, mesh:'7×3', len:'', wid:'', qty:'', clamp:false, clampWt:'', rate:''});
+  renderItems();
+}
+
+function removeItem(id) {
+  if(items.length === 1) return;
+  items = items.filter(i => i.id !== id);
+  renderItems();
+}
+
+function renderItems() {
+  const con = document.getElementById('items-container');
+  con.innerHTML = '';
+  items.forEach((item, idx) => {
+    const div = document.createElement('div');
+    div.className = 'card';
+    div.id = `item-card-${item.id}`;
+    div.innerHTML = buildItemHTML(item, idx);
+    con.appendChild(div);
+  });
+  updateSummary();
+}
+
+function buildItemHTML(item, idx) {
+  const meshOpts = buildMeshOptions().replace(`value="${item.mesh}"`, `value="${item.mesh}" selected`);
+  const calc = calcItem(item);
+  const showPrev = item.len && item.wid && parseFloat(item.len)>0 && parseFloat(item.wid)>0;
+  return `
+    <div class="item-hdr">
+      <div class="item-hdr-title" id="item-hdr-title-${item.id}"><span class="dot" style="background:var(--amber)"></span>ITEM #${idx+1} — ${item.mesh} mm</div>
+      ${items.length > 1 ? `<button class="rm-btn" onclick="removeItem(${item.id})">✕ Remove</button>` : ''}
+    </div>
+    <div class="fg">
+      <label class="lbl">MESH SIZE (Hole × Wire mm)</label>
+      <select onchange="setField(${item.id},'mesh',this.value)">${meshOpts}</select>
+    </div>
+    <div class="row3">
+      <div class="fg" style="margin:0">
+        <label class="lbl">LENGTH (mm)</label>
+        <input type="number" placeholder="e.g. 1200" value="${item.len}"
+          oninput="setField(${item.id},'len',this.value)">
+      </div>
+      <div class="fg" style="margin:0">
+        <label class="lbl">WIDTH (mm)</label>
+        <input type="number" placeholder="e.g. 900" value="${item.wid}"
+          oninput="setField(${item.id},'wid',this.value)">
+      </div>
+      <div class="fg" style="margin:0">
+        <label class="lbl">QTY (pcs)</label>
+        <input type="number" placeholder="1" value="${item.qty}"
+          oninput="setField(${item.id},'qty',this.value)">
+      </div>
+    </div>
+    <div class="calc-prev" id="calc-prev-${item.id}" style="display:${showPrev?'block':'none'};margin-top:10px">
+      ${showPrev ? `${mmToFt(item.len).toFixed(3)} ft × ${mmToFt(item.wid).toFixed(3)} ft = <b>${calc.sqft.toFixed(4)} sqft</b> &nbsp;·&nbsp; Wt/pc: <b>${calc.wpc.toFixed(3)} kg</b>` : ''}
+    </div>
+    <div class="clamp-row">
+      <button class="clamp-toggle ${item.clamp?'on':''}" id="clamp-btn-${item.id}" onclick="toggleClamp(${item.id})">
+        ${item.clamp ? '✓ CLAMP: YES' : 'CLAMP: NO'}
+      </button>
+      <div id="clamp-wt-section-${item.id}" class="clamp-wt-wrap" style="display:${item.clamp?'flex':'none'}">
+        <div class="fg" style="margin:0">
+          <label class="lbl">CLAMP WT (kg/pc)</label>
+          <input type="number" step="0.01" placeholder="e.g. 0.25"
+            value="${item.clampWt}"
+            oninput="setField(${item.id},'clampWt',this.value)">
+        </div>
+      </div>
+    </div>
+    <div class="fg">
+      <label class="lbl">RATE (₹ / kg)</label>
+      <div class="rate-wrap">
+        <span class="rate-pre">₹</span>
+        <input class="rate-inp" type="number" step="0.5" placeholder="e.g. 85"
+          value="${item.rate}" oninput="setField(${item.id},'rate',this.value)">
+        <span class="rate-suf">/ kg</span>
+      </div>
+    </div>
+    <div class="item-total" id="item-total-${item.id}" style="display:${calc.amt>0?'flex':'none'}">
+      <div class="item-total-info">Total Wt: <b>${calc.twt.toFixed(2)} kg</b><br>${item.qty||0} pcs × ₹${item.rate||0}/kg</div>
+      <div class="item-total-amt">₹${fmtINR(calc.amt)}</div>
+    </div>
+  `;
+}
+
+function setField(id, key, val) {
+  const item = items.find(i => i.id === id);
+  if(!item) return;
+  item[key] = val;
+  // Only update non-input parts (preview, totals) without re-rendering inputs
+  updateItemCalcDisplay(id);
+  updateSummary();
+}
+
+function updateItemCalcDisplay(id) {
+  const item = items.find(i => i.id === id);
+  if(!item) return;
+  const calc = calcItem(item);
+
+  // Update calc preview
+  const prevEl = document.getElementById(`calc-prev-${id}`);
+  if(prevEl) {
+    if(item.len && item.wid && parseFloat(item.len)>0 && parseFloat(item.wid)>0) {
+      prevEl.innerHTML = `${mmToFt(item.len).toFixed(3)} ft × ${mmToFt(item.wid).toFixed(3)} ft = <b>${calc.sqft.toFixed(4)} sqft</b> &nbsp;·&nbsp; Wt/pc: <b>${calc.wpc.toFixed(3)} kg</b>`;
+      prevEl.style.display = 'block';
+    } else {
+      prevEl.style.display = 'none';
+    }
+  }
+
+  // Update item total
+  const totEl = document.getElementById(`item-total-${id}`);
+  if(totEl) {
+    if(calc.amt > 0) {
+      totEl.innerHTML = `<div class="item-total-info">Total Wt: <b>${calc.twt.toFixed(2)} kg</b><br>${item.qty||0} pcs × ₹${item.rate||0}/kg</div><div class="item-total-amt">₹${fmtINR(calc.amt)}</div>`;
+      totEl.style.display = 'flex';
+    } else {
+      totEl.style.display = 'none';
+    }
+  }
+
+  // Update item header title
+  const hdrEl = document.getElementById(`item-hdr-title-${id}`);
+  if(hdrEl) hdrEl.innerHTML = `<span class="dot" style="background:var(--amber)"></span>ITEM #${items.indexOf(item)+1} — ${item.mesh} mm`;
+
+  // Update clamp weight section visibility
+  const clampWtEl = document.getElementById(`clamp-wt-section-${id}`);
+  if(clampWtEl) clampWtEl.style.display = item.clamp ? 'flex' : 'none';
+
+  // Update clamp toggle style
+  const clampBtn = document.getElementById(`clamp-btn-${id}`);
+  if(clampBtn) {
+    clampBtn.className = `clamp-toggle ${item.clamp ? 'on' : ''}`;
+    clampBtn.textContent = item.clamp ? '✓ CLAMP: YES' : 'CLAMP: NO';
+  }
+}
+
+function toggleClamp(id) {
+  const item = items.find(i => i.id === id);
+  if(!item) return;
+  item.clamp = !item.clamp;
+  updateItemCalcDisplay(id);
+  updateSummary();
+}
+
+// ── CALC ──────────────────────────────────────────────────
+function mmToFt(v) { return (parseFloat(v)||0) / 304.8; }
+
+function calcItem(item) {
+  const l = parseFloat(item.len)||0, w = parseFloat(item.wid)||0;
+  const qty = parseInt(item.qty)||0, rate = parseFloat(item.rate)||0;
+  const cw = item.clamp && parseFloat(item.clampWt) ? parseFloat(item.clampWt) : 0;
+  const wt = MESH[item.mesh]||0;
+  const sqft = mmToFt(l) * mmToFt(w);
+  const wpc = sqft * wt + cw;      // weight per piece
+  const twt = wpc * qty;            // total weight
+  const amt = twt * rate;
+  return { sqft, wpc, twt, amt };
+}
+
+// ── SUMMARY ───────────────────────────────────────────────
+function updateSummary() {
+  const rows = document.getElementById('sum-rows');
+  let html = '', totalWt = 0, totalAmt = 0;
+  items.forEach((item, idx) => {
+    const c = calcItem(item);
+    totalWt += c.twt; totalAmt += c.amt;
+    if(c.amt > 0) {
+      html += `<div class="sum-row">
+        <div>
+          <div class="sum-lbl">Item ${idx+1} — ${item.mesh} mm</div>
+          <div class="sum-meta">${item.len||'?'}×${item.wid||'?'}mm × ${item.qty||'?'}pcs${item.clamp?' + Clamp':''}</div>
+        </div>
+        <div class="sum-amt">₹${fmtINR(c.amt)}</div>
+      </div>`;
+    }
+  });
+  rows.innerHTML = html || '<div style="color:var(--muted);font-size:12px;padding:8px 0">Fill in item details above to see breakdown</div>';
+  document.getElementById('sum-wt').textContent = totalWt.toFixed(2)+' kg';
+  document.getElementById('sum-total').textContent = '₹ '+fmtINR(totalAmt);
+}
+
+function fmtINR(n) {
+  return n.toLocaleString('en-IN',{minimumFractionDigits:2,maximumFractionDigits:2});
+}
+
+// ── WA CARD ───────────────────────────────────────────────
+function buildWACard() {
+  const qno = document.getElementById('cust-qno').value;
+  const dateVal = document.getElementById('cust-date').value;
+  const custName = document.getElementById('cust-name').value || '—';
+  const custAddr = document.getElementById('cust-addr').value;
+  const dateStr = fmtDate(dateVal);
+  let totalWt = 0, totalAmt = 0;
+
+  const itemCards = items.map((item, idx) => {
+    const c = calcItem(item);
+    totalWt += c.twt; totalAmt += c.amt;
+    const clampStr = item.clamp ? `${item.clampWt||0} kg/pc` : 'No';
+    return `<div class="wc-item">
+      <div class="wc-item-hdr">
+        <div>
+          <div class="wc-item-no">ITEM ${idx+1}</div>
+          <div class="wc-item-mesh">${item.mesh} mm Mesh</div>
+        </div>
+        <div class="wc-item-amt">${c.amt>0?'₹'+fmtINR(c.amt):'—'}</div>
+      </div>
+      <div class="wc-item-grid">
+        <div class="wc-item-cell"><span>SIZE</span>${item.len&&item.wid?item.len+'×'+item.wid+' mm':'—'}</div>
+        <div class="wc-item-cell"><span>SQFT</span>${c.sqft>0?c.sqft.toFixed(3):'—'}</div>
+        <div class="wc-item-cell"><span>WT/PC</span>${c.wpc>0?c.wpc.toFixed(3)+' kg':'—'}</div>
+        <div class="wc-item-cell"><span>QTY</span>${item.qty||'—'} pcs</div>
+        <div class="wc-item-cell"><span>RATE</span>${item.rate?'₹'+item.rate+'/kg':'—'}</div>
+        <div class="wc-item-cell"><span>CLAMP</span>${clampStr}</div>
+        <div class="wc-item-cell"><span>TOTAL WT</span>${c.twt>0?c.twt.toFixed(2)+' kg':'—'}</div>
+      </div>
+    </div>`;
+  }).join('');
+
+  return `<div id="wa-card">
+    <div class="wc-top">
+      <div class="wc-hex">⬡</div>
+      <div>
+        <div class="wc-co">SHREE AMBICA ENGINEERING</div>
+        <div class="wc-sub">Wire Mesh Manufacturer</div>
+      </div>
+      <div class="wc-qbadge">
+        <div class="wc-qno">${qno}</div>
+        <div class="wc-qdate">${dateStr}</div>
+      </div>
+    </div>
+    <div class="wc-cust">
+      <div class="wc-cust-lbl">QUOTATION FOR</div>
+      <div class="wc-cust-name">${custName}</div>
+      ${custAddr ? `<div class="wc-cust-addr">${custAddr}</div>` : ''}
+    </div>
+    <div class="wc-items">${itemCards}</div>
+    <div class="wc-tots">
+      <div class="wc-tot-row"><span>Total Weight</span><span><b>${totalWt.toFixed(2)} kg</b></span></div>
+      <div class="wc-grand">
+        <span class="wc-grand-lbl">GRAND TOTAL (Excl. GST)</span>
+        <span class="wc-grand-amt">₹ ${fmtINR(totalAmt)}</span>
+      </div>
+    </div>
+    <div class="wc-foot">
+      <div class="wc-foot-note">Terms: Prices valid for 7 days · Subject to GST as applicable</div>
+      <div class="wc-foot-note">Payment: As per agreement</div>
+      <div class="wc-sig">
+        <div class="wc-sig-lbl">Authorised Signatory</div>
+        <div class="wc-sig-line"></div>
+        <div class="wc-sig-name">SHREE AMBICA ENGINEERING</div>
+      </div>
+    </div>
+  </div>`;
+}
+
+function openCard() {
+  document.getElementById('modal').querySelector('.modal-scroll').innerHTML = buildWACard();
+  document.getElementById('modal').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeCard() {
+  document.getElementById('modal').classList.remove('open');
+  document.body.style.overflow = '';
+}
+
+// ── WA TEXT ───────────────────────────────────────────────
+function sendWA() {
+  const qno = document.getElementById('cust-qno').value;
+  const dateStr = fmtDate(document.getElementById('cust-date').value);
+  const name = document.getElementById('cust-name').value || '—';
+  const addr = document.getElementById('cust-addr').value;
+  let totalWt = 0, totalAmt = 0;
+  let txt = `🔩 *SHREE AMBICA ENGINEERING*\n_Wire Mesh Manufacturer_\n`;
+  txt += `━━━━━━━━━━━━━━━━━━━━━\n`;
+  txt += `*QUOTATION: ${qno}*\n📅 Date: ${dateStr}\n👤 To: ${name}\n`;
+  if(addr) txt += `📍 ${addr}\n`;
+  txt += `━━━━━━━━━━━━━━━━━━━━━\n\n`;
+  items.forEach((item, idx) => {
+    const c = calcItem(item);
+    totalWt += c.twt; totalAmt += c.amt;
+    txt += `*Item ${idx+1}: ${item.mesh} mm Mesh*\n`;
+    txt += `📐 Size: ${item.len||'?'}×${item.wid||'?'}mm\n`;
+    txt += `📊 Sqft: ${c.sqft.toFixed(3)} | Wt/pc: ${c.wpc.toFixed(3)} kg\n`;
+    if(item.clamp) txt += `🔩 Clamp: ${item.clampWt||0} kg/pc\n`;
+    txt += `📦 Qty: ${item.qty||'?'} pcs\n`;
+    txt += `💰 Rate: ₹${item.rate||'?'}/kg\n`;
+    txt += `⚖️ Total Wt: ${c.twt.toFixed(2)} kg\n`;
+    txt += `💵 Amount: *₹${fmtINR(c.amt)}*\n\n`;
+  });
+  txt += `━━━━━━━━━━━━━━━━━━━━━\n`;
+  txt += `⚖️ *Total Weight: ${totalWt.toFixed(2)} kg*\n`;
+  txt += `💰 *GRAND TOTAL: ₹${fmtINR(totalAmt)}*\n_(Prices exclusive of GST)_\n\n`;
+  txt += `_Valid for 7 days. Thank you! 🙏_`;
+  window.open('https://wa.me/?text='+encodeURIComponent(txt), '_blank');
+}
+
+// ── HELPERS ───────────────────────────────────────────────
+function fmtDate(d) {
+  if(!d) return '';
+  const [y,m,day] = d.split('-');
+  return `${day} ${MONTHS[parseInt(m)-1]} ${y}`;
+}
+
+// Close modal on overlay click
+document.getElementById('modal').addEventListener('click', function(e) {
+  if(e.target === this) closeCard();
+});
+
+init();
+</script>
+</body>
+</html>
