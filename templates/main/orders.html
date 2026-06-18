@@ -107,6 +107,30 @@ select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/
 .sc-total-price{font-size:20px;font-weight:900;color:#b45309}
 .sc-footer{background:#faf7f4;padding:8px 16px;font-size:10px;color:#a39389;text-align:center;border-top:1px solid #e7e0d8}
 .sc-action-row{display:flex;gap:8px;padding:12px 16px;background:#fff;border-top:1px solid #e7e0d8}
+.orders-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:10px}
+.grid-card{background:#fff;border-radius:14px;border:1px solid #e7e0d8;box-shadow:0 1px 4px rgba(0,0,0,.06);overflow:hidden;transition:box-shadow .2s}
+.grid-card:hover{box-shadow:0 4px 16px rgba(0,0,0,.12)}
+.grid-card.pending{border-top:3px solid #d97706}
+.grid-card.done{border-top:3px solid #16a34a;opacity:.85}
+.grid-card-body{padding:12px 14px}
+.gc-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
+.gc-ordno{font-weight:900;font-size:15px;color:#1c1917}
+.gc-sizes{font-size:12px;color:#57534e;line-height:1.6;margin-bottom:10px;min-height:36px}
+.gc-size-item{display:flex;align-items:center;gap:4px;margin-bottom:3px}
+.gc-footer{display:flex;justify-content:space-between;align-items:center;padding:8px 14px;border-top:1px solid #f0ebe3;background:#faf7f4}
+.gc-customer{display:flex;align-items:center;gap:8px}
+.gc-avatar{width:28px;height:28px;border-radius:50%;background:#d97706;color:#fff;font-size:11px;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.gc-name{font-size:12px;font-weight:700;color:#1c1917}
+.gc-loc{font-size:10px;color:#a39389}
+.gc-price{font-size:13px;font-weight:800;color:#b45309;text-align:right}
+.gc-wt{font-size:10px;color:#a39389;text-align:right}
+.gc-meta{font-size:10px;color:#a39389;margin-bottom:8px}
+.gc-actions{display:flex;gap:4px;padding:8px 14px;border-top:1px solid #f0ebe3;flex-wrap:wrap}
+.gc-actions button{font-size:11px;padding:4px 8px}
+.item-badge{display:inline-flex;align-items:center;gap:4px;background:#fff7ed;border:1px solid #f5d078;border-radius:6px;padding:2px 7px;font-size:11px;margin-bottom:3px;cursor:pointer}
+.item-badge.done-item{background:#dcfce7;border-color:#86efac;text-decoration:line-through;opacity:.7}
+@media(max-width:768px){.orders-grid{grid-template-columns:repeat(2,1fr);gap:8px}}
+@media(max-width:420px){.orders-grid{grid-template-columns:1fr}}
 </style>
 
 <div id="oheader">
@@ -246,7 +270,7 @@ function renderOrders() {
     el.innerHTML = `<div class="oempty"><div class="empty-icon">📋</div><div>No orders found</div><br><button class="btn-p" onclick="newOrder()">+ Add First Order</button></div>`;
     return;
   }
-  el.innerHTML = filtered.map(o => orderCardHTML(o)).join('');
+  el.innerHTML = `<div class="orders-grid">${filtered.map(o => orderCardHTML(o)).join('')}</div>`;
 }
 
 
@@ -307,61 +331,52 @@ function renderOrders() {
 function orderCardHTML(o) {
   const done = o.status === 'completed';
   const items = (o.lineItems||[]).map(migrateLI).filter(li => li.meshSize || li.rows.some(r=>r.dims||r.qty));
+  const doneCount = items.filter(li=>li.done).length;
+  const initials = o.customerName.split(' ').map(w=>w[0]).join('').substring(0,2).toUpperCase();
 
-  const itemsHTML = items.map((li, liIdx) => {
+  const sizesHTML = items.map((li, liIdx) => {
+    const totalNos = li.rows.reduce((s,r)=>s+(parseFloat(r.qty)||0),0);
+    const totalWt  = li.rows.reduce((s,r)=>s+(parseFloat(r.qty)||0)*(parseFloat(r.weightEach)||0),0);
     const itemDone = !!li.done;
-    const rowsHTML = li.rows.filter(r=>r.dims||r.qty).map(row => {
-      const lw = row.qty && row.weightEach ? (parseFloat(row.qty)*parseFloat(row.weightEach)).toFixed(3) : '';
-      const ppn = row.weightEach && o.rate ? parseFloat((parseFloat(row.weightEach)*parseFloat(o.rate)).toFixed(2)) : '';
-      return `<div class="line-item-row" style="padding-left:10px">
-        <span style="color:#57534e">${row.dims} — ${row.qty} Nos${ppn?` <span style="color:#15803d;font-size:10px;font-weight:700">(₹${Number(ppn).toLocaleString('en-IN')}/nos)</span>`:''}</span>
-        ${lw ? `<span style="color:#d97706;font-weight:700">${lw} kg</span>` : ''}
-      </div>`;
-    }).join('');
-    return `<div style="margin-bottom:6px;${itemDone?'opacity:.55':''}">
-      <div style="display:flex;align-items:center;gap:6px;padding:3px 0;border-bottom:1px solid #f0ebe3">
-        <span class="type-badge">${li.type||'C'}</span>
-        <b style="font-size:12px;flex:1;${itemDone?'text-decoration:line-through':''}">${li.meshSize||'—'}</b>
-        <button class="btn-sm" style="padding:3px 8px;font-size:10px;background:${itemDone?'#dcfce7':'#fff7ed'};color:${itemDone?'#16a34a':'#d97706'};border-radius:6px;font-weight:700" onclick="event.stopPropagation();toggleItemStatus('${o.id}',${liIdx})">${itemDone?'✓ Done':'Pending'}</button>
-      </div>
-      ${rowsHTML}
+    return `<div class="item-badge ${itemDone?'done-item':''}" onclick="event.stopPropagation();toggleItemStatus('${o.id}',${liIdx})">
+      <span style="background:#d97706;color:#fff;border-radius:3px;padding:0 4px;font-size:9px;font-weight:800">${li.type||'C'}</span>
+      <span>${li.meshSize||'—'}</span>
+      ${totalNos?`<span style="color:#a39389">${totalNos}nos</span>`:''}
+      ${totalWt?`<span style="color:#d97706">${totalWt.toFixed(1)}kg</span>`:''}
+      ${itemDone?'✓':''}
     </div>`;
   }).join('');
 
-  // Quick summary line (always visible without opening)
-  const summaryLine = items.map(li => `${li.meshSize||'—'} (${li.type||'C'})`).join(', ');
-  const doneCount = items.filter(li=>li.done).length;
-
   return `
-  <div class="ocard order-card ${done?'done':''}" id="card-${o.id}">
-    <div class="order-header" onclick="toggleCard('${o.id}')">
-      <span class="order-no">#${o.orderNo}</span>
-      <div style="flex:1;min-width:0">
-        <div class="order-name">${esc(o.customerName)}</div>
-        <div class="order-sub">${[o.location,o.orderDate].filter(Boolean).join(' · ')}</div>
-        ${summaryLine ? `<div class="order-sub" style="margin-top:2px;color:#78716c">${esc(summaryLine)}</div>` : ''}
+  <div class="grid-card ${done?'done':'pending'}" id="card-${o.id}">
+    <div class="grid-card-body">
+      <div class="gc-header">
+        <span class="gc-ordno">#${o.orderNo}</span>
+        <span class="badge ${done?'done':'pending'}">${done?'✓ Done':'Pending'}</span>
       </div>
-      <div style="flex-shrink:0;margin-right:4px">
-        ${o.totalPrice ? `<div class="order-price">₹${Number(o.totalPrice).toLocaleString('en-IN')}</div>` : ''}
-        <div class="order-wt">${o.totalWeight||''}kg · ${o.totalNos||''}nos</div>
-        ${items.length ? `<div class="order-wt" style="color:#15803d">${doneCount}/${items.length} sizes done</div>` : ''}
-      </div>
-      <span class="badge ${done?'done':'pending'}">${done?'✓ Done':'Pending'}</span>
-      <span class="chevron" id="chev-${o.id}">▼</span>
+      <div class="gc-meta">${o.orderDate||''}${o.location?' · '+esc(o.location):''}</div>
+      <div class="gc-sizes">${sizesHTML||'<span style="color:#c7bdb5">No items</span>'}</div>
+      ${items.length>1?`<div style="font-size:10px;color:#a39389;margin-bottom:4px">${doneCount}/${items.length} sizes done</div>`:''}
     </div>
-    <div class="order-detail ohidden" id="detail-${o.id}">
-      ${items.length ? `<div style="background:#faf7f4;border-radius:10px;padding:10px;border:1px solid #ede8e3;margin-bottom:8px">${itemsHTML}
-        <div class="total-row"><span>${o.totalNos} Nos total</span><span style="color:#d97706">${o.totalWeight} kg</span></div>
-      </div>` : ''}
-      ${o.rate ? `<div class="rate-info">Rate: ₹${o.rate}/kg · Total: <b>₹${Number(o.totalPrice||0).toLocaleString('en-IN')}</b></div>` : ''}
-      ${o.notes ? `<div style="font-size:11px;color:#a39389;font-style:italic;margin-top:6px">${esc(o.notes)}</div>` : ''}
-      <div class="action-btns">
-        <button class="btn-s btn-sm" onclick="editOrder('${o.id}')">✏️ Edit</button>
-        <button class="${done?'btn-s':'btn-g'} btn-sm" onclick="toggleStatus('${o.id}')">${done?'↩ Reopen':'✅ Done'}</button>
-        <button class="btn-p btn-sm" onclick="sendWA('${o.id}')">📲 WhatsApp</button>
-        <button class="btn-s btn-sm" onclick="openShareCard('${o.id}')">📸 Card</button>
-        <button class="btn-d btn-sm" onclick="deleteOrder('${o.id}')">🗑️</button>
+    <div class="gc-footer">
+      <div class="gc-customer">
+        <div class="gc-avatar">${initials}</div>
+        <div>
+          <div class="gc-name">${esc(o.customerName)}</div>
+          <div class="gc-loc">${esc(o.location||'—')}</div>
+        </div>
       </div>
+      <div>
+        ${o.totalPrice?`<div class="gc-price">₹${Number(o.totalPrice).toLocaleString('en-IN')}</div>`:''}
+        <div class="gc-wt">${o.totalWeight||''}kg · ${o.totalNos||''}nos</div>
+      </div>
+    </div>
+    <div class="gc-actions">
+      <button class="btn-s btn-sm" onclick="editOrder('${o.id}')">✏️</button>
+      <button class="${done?'btn-s':'btn-g'} btn-sm" onclick="toggleStatus('${o.id}')">${done?'↩':'✅'}</button>
+      <button class="btn-p btn-sm" onclick="sendWA('${o.id}')">📲</button>
+      <button class="btn-s btn-sm" onclick="openShareCard('${o.id}')">📸</button>
+      <button class="btn-d btn-sm" onclick="deleteOrder('${o.id}')">🗑️</button>
     </div>
   </div>`;
 }
