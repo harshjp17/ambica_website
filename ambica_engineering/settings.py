@@ -11,6 +11,7 @@ DEBUG = False
 ALLOWED_HOSTS = [
     'ambicaeng.co.in',
     'www.ambicaeng.co.in',
+    'ambicawebsite-production.up.railway.app',
     'localhost',
     '127.0.0.1',
 ]
