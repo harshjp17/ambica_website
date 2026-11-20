@@ -6,7 +6,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'ambica@shree#2025$engineering!harsh&wire@mesh#gujarat'
 
 DEBUG = True
-
+LOGIN_URL = '/orders/login/'
 LOGGING = {
     "version": 1,
     "disable_existing_loggers": False,
