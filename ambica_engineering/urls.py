@@ -10,5 +10,4 @@ admin.site.index_title  = settings.ADMIN_INDEX_TITLE
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include('main.urls')),
-     path('', lambda request: redirect('/login/'))
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
