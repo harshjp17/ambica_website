@@ -5,7 +5,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 SECRET_KEY = 'ambica@shree#2025$engineering!harsh&wire@mesh#gujarat'
 
-DEBUG = False
+DEBUG = True
 
 LOGGING = {
     "version": 1,
